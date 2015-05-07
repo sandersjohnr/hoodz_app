@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   # D3 routes
   get 'map/index'
   # force route to return json instead of defaulting to .erb
-  get 'map/data' =>, :defaults => { :format => 'json'}
+  get 'map/data', :defaults => { :format => 'json'}
 
 
 
