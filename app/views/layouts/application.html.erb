@@ -42,6 +42,12 @@
     console.log(json.features);
     hoods_data = json.features;
 
+    console.log(hoods_data.length)
+
+    var hslScale = d3.scale.linear()
+                   .domain([0, hoods_data.length])
+                   .range([60, 300])
+
     // find centroid of geojson
     // create first guess for projection position
     var center = d3.geo.centroid(json)
@@ -55,30 +61,78 @@
     // create path
     var path = d3.geo.path().projection(projection);
 
-    // // use path to determine bounds of current map and use them
-    // // to determing better scale and translation values
-    
-    // var bounds  = path.bounds(json);
-    // var hscale  = scale * width / (bounds[1][0] - bounds[0][0]);
-    // var vscale  = scale * height / (bounds[1][1] - bounds[0][1]);
-    // var scale   = (hscale < vscale) ? hscale : vscale;
-    // var offset  = [width - (bounds[0][0] + bounds[1][0])/2, height - (bounds[0][1] + bounds[1][1])/2];
-
-    // // new projection
-    // projection = d3.geo.mercator().center(center)
-    //     .scale(scale).translate(offset);
-    // path = path.projection(projection);
-
-    svg.selectAll('path')
+    var hoods = svg.append('g')
+        .selectAll('path')
         .data(hoods_data)
         .enter()
         .append('path')
+        .attr('id', function(d,i) { return 'hood-' + i; })
         .attr('d', path)
-        .style('stroke-width', '1');
-        // .style('fill', 'steelblue')
-        // .style('stroke', 'black');
+        .attr('stroke', 'darkblue')
+        .attr('stroke-width','1')
+        .attr('fill', function(d,i) { 
+          console.log(i, hslScale(i))
+          return 'hsl(' + hslScale(i) + ',50%,80%)'; 
+        });
+
+    d3.select('g').attr('class', 'hoods')
+
+
+
+
+    // hoods.on('mouseover', hoodMouseover);
+    // hoods.on('mouseleave', hoodMouseleave);
+    hoods.on('click', hoodClick);
+
+    var quizHood = d3.select('#hood-'+selectRandomHood())
+    console.log(quizHood)
   });
+
+  function hoodClick() {
+    var clickedHood = d3.select(this);
+    console.log(clickedHood)
+    console.log(clickedHood.classed('wrong-guess'))
+    var isWrong = clickedHood.classed('wrong-guess')
+    if (!isWrong) {
+      clickedHood
+        .classed('wrong-guess', true)
+        .transition()
+        .duration(500)
+        .attr('fill', 'red')
+    } else {
+      clickedHood
+        .classed('wrong-guess', false)
+        .transition()
+        .duration(500)
+        .attr('fill', 'lightgrey')
+    }
+      // .attr('stroke', 'white');
+      // .attr('stroke-width','1');
+  };
+
+  function hoodMouseover() {
+    d3.select(this)
+        .transition()
+        .duration(250)
+        .attr('fill','yellow')
+        .transition()
+        .duration(500)
+        .attr('fill', 'steelblue')
+  };
+
+  function hoodMouseleave() {
+    d3.select(this)
+        .transition()
+        .duration(500)
+        .attr('fill','steelblue')
+  }
   
+  function selectRandomHood() {
+    randNum = Math.floor(Math.random() * hoods_data.length)
+    console.log(randNum);
+    return randNum
+  }
+
 </script>
 
 
