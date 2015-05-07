@@ -16,8 +16,25 @@
 
 body {
   font-family: Lato, sans-serif;
+  color: white;
+  background-color: grey;
 }
 
 a {
   text-decoration: none;
+}
+
+path {
+  stroke: darkblue;
+  stroke-width: 1;
+  fill: steelblue;
+}
+
+path:hover {
+  stroke-width: 10px;
+  fill: cornflowerblue;
+}
+
+path.clicked {
+  fill: yellow;
 }

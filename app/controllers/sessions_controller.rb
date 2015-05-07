@@ -1,5 +1,8 @@
 class SessionsController < ApplicationController
 
+  def show
+    render json: session
+  end
   def new
   end
 

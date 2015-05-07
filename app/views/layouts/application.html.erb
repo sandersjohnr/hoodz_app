@@ -21,8 +21,67 @@
     <%= link_to 'Log In', sessions_new_path %>
   </p>
 <% end %>
+<hr>
 
 <%= yield %>
+
+<div id="map"></div>
+
+<script type="text/javascript">
+  
+  var width = 1000;
+  var height = 800;
+
+  //create svg element
+  var svg = d3.select('#map')
+              .append('svg')
+              .attr('width', width)
+              .attr('height', height);
+
+  d3.json("../assets/bklyn.geojson", function(error, json) {
+    console.log(json.features);
+    hoods_data = json.features;
+
+    // find centroid of geojson
+    // create first guess for projection position
+    var center = d3.geo.centroid(json)
+    var scale = 130 * width;
+    var offset = [ width/2 - 750, height/2 + 350];
+    var projection = d3.geo.mercator()
+        .scale(scale)
+        .center(center)
+        .translate(offset);
+
+    // create path
+    var path = d3.geo.path().projection(projection);
+
+    // // use path to determine bounds of current map and use them
+    // // to determing better scale and translation values
+    
+    // var bounds  = path.bounds(json);
+    // var hscale  = scale * width / (bounds[1][0] - bounds[0][0]);
+    // var vscale  = scale * height / (bounds[1][1] - bounds[0][1]);
+    // var scale   = (hscale < vscale) ? hscale : vscale;
+    // var offset  = [width - (bounds[0][0] + bounds[1][0])/2, height - (bounds[0][1] + bounds[1][1])/2];
+
+    // // new projection
+    // projection = d3.geo.mercator().center(center)
+    //     .scale(scale).translate(offset);
+    // path = path.projection(projection);
+
+    svg.selectAll('path')
+        .data(hoods_data)
+        .enter()
+        .append('path')
+        .attr('d', path)
+        .style('stroke-width', '1');
+        // .style('fill', 'steelblue')
+        // .style('stroke', 'black');
+  });
+  
+</script>
+
+
 
 </body>
 </html>
