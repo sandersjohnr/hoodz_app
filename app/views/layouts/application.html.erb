@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hoodz</title>
+  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<h1>Hoodz</h1>
+
+<% if current_user %>
+  <p>
+    Welcome back, <%= current_user.first_name %> |
+    <%= link_to 'Log Out', sessions_path, method: :delete %>
+  </p>
+<% else %>
+  <p>
+    <%= link_to 'Sign Up', new_user_path %> |
+    <%= link_to 'Log In', sessions_new_path %>
+  </p>
+<% end %>
+
+<%= yield %>
+
+</body>
+</html>
