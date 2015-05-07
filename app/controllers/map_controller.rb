@@ -3,10 +3,14 @@ class MapController < ApplicationController
   def index
   end
 
-  def data
-    respnd_to do |format|
+  def data  
+    dataset = (1..20).to_a
+    respond_to do |format|
       format.json {
-        render :json => [1,2,3,4,5]
+        render :json => dataset
       }
+    end
   end
+
+
 end
