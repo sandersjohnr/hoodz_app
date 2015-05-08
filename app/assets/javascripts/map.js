@@ -70,6 +70,9 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
       })
       .attr('data-basecolor', function(d,i) { 
         return 'hsl(' + hslScale(i) + ',70%,80%)'; 
+      })
+      .attr('data-hoodname', function(d) {
+        return d.properties.neighborhood;
       });
 
 
@@ -106,7 +109,6 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
   // ------------------------------------------------------------
 
   // for (var hoodIndex = 0; hoodIndex < hoodQuizNames.length; hoodIndex++ ) {
-    
 
     
     console.log(remainingHoodClasses.length)
@@ -117,21 +119,25 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
 
 
     // fill current quiz path with yellow
-    setPathToColor(currentQuizClass, 'yellow');
-
+    // setPathToColor(currentQuizClass, 'yellow');
 
     // display guess UI
     $('#guess-ui').show();
+    $('#guess-ui').empty().text(currentQuizHood)
 
     // listen for user to submit guess
     var currentGuess = '';
 
-    d3.select('button#guess').on('click', getGuess);
+    d3.selectAll('.hood').on('click', checkGuess)
+    // d3.select('button#guess').on('click', getGuess);
 
-    function getGuess() {
-      currentGuess = $('#guess-input').val();
-      var currentGuessClass = hoodToClassName(currentGuess);
-      if ( currentGuessClass === currentQuizClass ) {
+    function checkGuess() {
+      // currentGuess = $('#guess-input').val();
+      var guessedName = d3.select(this).attr('data-hoodname');
+      var guessedClass = hoodToClassName(guessedName)
+      console.log(guessedName, guessedClass)
+      // var currentGuessClass = hoodToClassName(currentGuess);
+      if ( guessedClass == currentQuizClass ) {
         alert('correct guess!');
         setPathToColor(currentQuizClass, 'lime');
 
@@ -139,12 +145,12 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
         alert('incorrect, dude');
         setPathToColor(currentQuizClass, 'red');
       }
-      // remove guessed hood from hood list array
-      var index = remainingHoodClasses.indexOf(currentGuessClass);    // <-- Not supported in <IE9
-        if (index !== -1) {
-          remainingHoodClasses.splice(index, 1);
-        }
-      console.log(remainingHoodClasses)
+      // // remove guessed hood from hood list array
+      // var index = remainingHoodClasses.indexOf(currentGuessClass);    // <-- Not supported in <IE9
+      //   if (index !== -1) {
+      //     remainingHoodClasses.splice(index, 1);
+      //   }
+      // console.log(remainingHoodClasses)
     }
 
 
@@ -231,3 +237,8 @@ function selectRandomHood(remainingNames) {
   randNum = Math.floor(Math.random() * remainingNames.length)
   return remainingNames[randNum];
 }
+
+
+
+
+// TESTESTESTESTESTESTESTSETEST
