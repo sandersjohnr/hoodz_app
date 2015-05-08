@@ -11,7 +11,7 @@
 <span><h1>Hoodz</h1></span>
 
 <% if current_user %>
-  <span>
+  <span id="welcome">
     Welcome back, <%= current_user.first_name %>!
     <%= link_to 'Log Out', sessions_path, method: :delete %> |
     <%= link_to 'Start Game', map_index_path %>
@@ -26,7 +26,6 @@
 
 <%= yield %>
 
-<hr>
 
 
 

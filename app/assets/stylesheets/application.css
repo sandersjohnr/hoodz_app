@@ -26,8 +26,27 @@ a {
   color: cornflowerblue;
 }
 
-.wrong-guess {
-  /*fill: red;*/
+h1 {
+  position: fixed;
+  top: 0px;
+  left: 10px;
+}
+
+#guess-ui {
+  position: fixed;
+  left: 350px;
+  top: 70px;
+}
+
+#welcome {
+  position: fixed;
+  top: 35px;
+  left: 150px;
+}
+
+svg {
+  margin-top: 50px;  
+  border: 1px solid red;
 }
 
 path {
@@ -37,8 +56,7 @@ path {
 }
 
 path:hover {
-  /*stroke-width: 3;*/
-  /*fill: cornflowerblue;*/
+  stroke-width: 4;
 }
 
 path.clicked {
