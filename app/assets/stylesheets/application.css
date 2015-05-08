@@ -18,23 +18,29 @@ body {
   font-family: Lato, sans-serif;
   color: white;
   background-color: grey;
+  text-shadow: 1px 1px 3px black;
 }
 
 a {
   text-decoration: none;
+  color: cornflowerblue;
+}
+
+.wrong-guess {
+  /*fill: red;*/
 }
 
 path {
-  stroke: darkblue;
-  stroke-width: 1;
-  fill: steelblue;
+  /*stroke: darkblue;*/
+  /*stroke-width: 1;*/
+  /*fill: steelblue;*/
 }
 
 path:hover {
-  stroke-width: 10px;
-  fill: cornflowerblue;
+  /*stroke-width: 3;*/
+  /*fill: cornflowerblue;*/
 }
 
 path.clicked {
-  fill: yellow;
+  /*fill: yellow;*/
 }
