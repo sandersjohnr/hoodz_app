@@ -10,9 +10,10 @@
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
  *
- *= require_tree .
- *= require_self
+
+
  */
+
 
 body {
   font-family: Lato, sans-serif;
@@ -44,9 +45,24 @@ h1 {
   left: 150px;
 }
 
+h1 {
+  display: inline-block;
+
+}
+
+form {
+ display: inline-block;
+ margin-top: 50px;
+ margin-left: 5px;
+}
 svg {
   margin-top: 50px;  
-  border: 1px solid red;
+}
+
+div#login {
+  position: fixed;
+  left: 300px;
+
 }
 
 path {
@@ -56,7 +72,7 @@ path {
 }
 
 path:hover {
-  stroke-width: 4;
+  stroke-width: 2;
 }
 
 path.clicked {

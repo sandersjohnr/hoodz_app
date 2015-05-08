@@ -154,7 +154,7 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
         playRound();
       
       } else {
-        alert('Gamer Over')
+        alert('Game Over')
         hoods.on('click', null);
       }
 
