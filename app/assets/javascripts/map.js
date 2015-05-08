@@ -16,12 +16,13 @@
 var width = 1000;
 var height = 800;
 
-//create svg element
+// create svg element
 var svg = d3.select('#map')
             .append('svg')
             .attr('width', width)
             .attr('height', height);
 
+$('#guess-ui').hide();
 
 // GRAB GEOJSON AND GET CRACKING
 
@@ -31,7 +32,7 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
   var filteredHoodsData = hoods_data.filter(function(hood) {
     return (hood.properties.neighborhood != 'Jamaica Bay') && (hood.properties.neighborhood != 'Marine Park')
   });
-  // hoods_data = filteredHoodsData;
+  hoods_data = filteredHoodsData;
   
   var hslScale = d3.scale.linear()
                  .domain([0, hoods_data.length])
@@ -65,20 +66,15 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
       .attr('stroke', 'darkblue')
       .attr('stroke-width','1')
       .attr('fill', function(d,i) { 
-        return 'hsl(' + hslScale(i) + ',70%,72%)'; 
+        return 'hsl(' + hslScale(i) + ',70%,80%)'; 
       })
       .attr('data-basecolor', function(d,i) { 
-        return 'hsl(' + hslScale(i) + ',70%,72%)'; 
+        return 'hsl(' + hslScale(i) + ',70%,80%)'; 
       });
-      /*.attr('data-hoodname', function(d) {
-        return d.properties.neighborhood;
-      })*/
-      // .attr('data-boroname', function(d) {
-      //   return d.properties.borough;
-      // });
+
 
   // Greenify the free spaces
-  var greenery = 'hsl(100, 80%, 72%)';
+  var greenery = 'hsl(80, 80%, 80%)';
   d3.selectAll('.jamaica-bay-path').attr('data-basecolor', greenery).attr('fill', greenery)
   d3.selectAll('.marine-park-path').attr('data-basecolor', greenery).attr('fill', greenery)
   d3.select('.prospect-park-path').attr('data-basecolor', greenery).attr('fill', greenery)
@@ -90,7 +86,8 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
   // hood # 32 is Green-Wood Cemetery
   // hood # 61 is Prospect Park
 
- 
+
+  // Initialize hood quiz list
   var hoodQuizNames = [];
   d3.selectAll('.hood').each(function(p) {
     currentName = p.properties.neighborhood
@@ -99,15 +96,71 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
     } 
   });
 
+  // Initalize remaining names array before main game loop
+  var remainingHoodClasses = hoodQuizNames.map(function(name) {
+    return hoodToClassName(name);
+  }); 
 
-  console.log(hoodQuizNames)
+  // ------------------------------------------------------------
+  // START GAME
+  // ------------------------------------------------------------
 
-  
+  // for (var hoodIndex = 0; hoodIndex < hoodQuizNames.length; hoodIndex++ ) {
+    
+
+    
+    console.log(remainingHoodClasses.length)
+    // select random hood for quiz
+    var currentQuizHood = selectRandomHood(remainingHoodClasses);
+    var currentQuizClass = hoodToClassName(currentQuizHood);
+    console.log(currentQuizClass);
+
+
+    // fill current quiz path with yellow
+    setPathToColor(currentQuizClass, 'yellow');
+
+
+    // display guess UI
+    $('#guess-ui').show();
+
+    // listen for user to submit guess
+    var currentGuess = '';
+
+    d3.select('button#guess').on('click', getGuess);
+
+    function getGuess() {
+      currentGuess = $('#guess-input').val();
+      var currentGuessClass = hoodToClassName(currentGuess);
+      if ( currentGuessClass === currentQuizClass ) {
+        alert('correct guess!');
+        setPathToColor(currentQuizClass, 'lime');
+
+      } else {
+        alert('incorrect, dude');
+        setPathToColor(currentQuizClass, 'red');
+      }
+      // remove guessed hood from hood list array
+      var index = remainingHoodClasses.indexOf(currentGuessClass);    // <-- Not supported in <IE9
+        if (index !== -1) {
+          remainingHoodClasses.splice(index, 1);
+        }
+      console.log(remainingHoodClasses)
+    }
+
+
+  // } //END MAIN GAME
+
+
+
+
+
+  // display form for user input of guess
+  // CREATE TOOL TIP?
 
 
 
   // MOUSE EVENTS
-  hoods.on('click', hoodClick);
+  // hoods.on('click', hoodClick);
   // hoods.on('mouseover', hoodMouseover);
   // hoods.on('mouseleave', hoodMouseleave);
 
@@ -116,15 +169,16 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
 
 
 
-function playGame() {
-  
-}
-
 
 
 
 
 // HELPER FUNCTIONS
+
+function setPathToColor(pathClass, color) {
+  d3.select('.' + pathClass + '-path').attr('fill', color);
+
+}
 
 function hoodToClassName (hoodName) {
   var hoodNameArray = hoodName.split(' ');
@@ -177,6 +231,3 @@ function selectRandomHood(remainingNames) {
   randNum = Math.floor(Math.random() * remainingNames.length)
   return remainingNames[randNum];
 }
-
-
-

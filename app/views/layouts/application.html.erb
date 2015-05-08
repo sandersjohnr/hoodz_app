@@ -13,8 +13,9 @@
 <% if current_user %>
   <span>
     Welcome back, <%= current_user.first_name %>!
-    <%= link_to 'Log Out', sessions_path, method: :delete %>
-    <div id="map"></div>
+    <%= link_to 'Log Out', sessions_path, method: :delete %> |
+    <%= link_to 'Start Game', map_index_path %>
+    <!-- <div id="map"></div> -->
   </span>
 <% else %>
   <p>
@@ -24,11 +25,8 @@
 <% end %>
 
 <%= yield %>
+
 <hr>
-
-<script type="text/javascript" src='../assets/map.js'></script>
-
-
 
 
 
