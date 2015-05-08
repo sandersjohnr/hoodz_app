@@ -16,11 +16,6 @@ Rails.application.routes.draw do
   # force route to return json instead of defaulting to .erb
   get 'map/data', :defaults => { :format => 'json'}
 
-
-
-
-
-
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

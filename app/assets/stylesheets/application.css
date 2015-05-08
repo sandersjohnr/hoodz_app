@@ -23,6 +23,7 @@ body {
 
 a {
   text-decoration: none;
+  color: cornflowerblue;
 }
 
 .wrong-guess {
@@ -37,7 +38,7 @@ path {
 
 path:hover {
   /*stroke-width: 3;*/
-  fill: cornflowerblue;
+  /*fill: cornflowerblue;*/
 }
 
 path.clicked {
