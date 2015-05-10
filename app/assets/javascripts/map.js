@@ -133,13 +133,11 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
       var guessedName = d3.select(this).attr('data-hoodname');
       var guessedClass = hoodToClassName(guessedName)
       if ( guessedClass == currentQuizClass ) {
-        console.log('correct guess!');
+        // console.log('correct guess!');
         setPathToColor(currentQuizClass, 'lime');
-
       } else {
-        console.log('incorrect, dude');
+        // console.log('incorrect, dude');
         setPathToColor(currentQuizClass, 'red');
-
       }
 
       // remove guessed hood from hood list array
@@ -147,13 +145,14 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
         if (hoodIndex !== -1) {
           remainingNames.splice(hoodIndex, 1);
         }
-      console.log(remainingNames)
-      console.log(remainingNames.length)
+      // console.log(remainingNames)
+      // console.log(remainingNames.length)
       
       if (remainingNames.length > 0) {
         playRound();
       
       } else {
+        // End game, remove event listeners
         alert('Game Over')
         hoods.on('click', null);
       }
@@ -164,14 +163,17 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
     }
   }  
 
-  // display form for user input of guess
   // CREATE TOOL TIP?
+
+
+
+
 
   // MOUSE EVENTS
   // hoods.on('click', hoodClick);
   // hoods.on('mouseover', hoodMouseover);
-  // hoods.on('mouseenter', hoodMouseenter);
-  // hoods.on('mouseleave', hoodMouseleave);
+  hoods.on('mouseenter', hoodMouseenter);
+  hoods.on('mouseleave', hoodMouseleave);
 
 
 }); // END OF MAIN FUNCTION ############################################
@@ -198,6 +200,14 @@ function hoodToClassName (hoodName) {
   return lowercaseArray.join('-');
 }
 
+function selectRandomHood(remainingNames) {
+  randNum = Math.floor(Math.random() * remainingNames.length)
+  return remainingNames[randNum];
+}
+
+
+
+// Aesthetic UI selection events
 
 function hoodClick() {
   var clickedHood = d3.select(this);
@@ -232,17 +242,10 @@ function hoodMouseover() {
 };
 
 function hoodMouseleave() {
+  
   d3.select(this)
       .transition()
       .duration(500)
       .attr('fill','steelblue')
 }
-
-function selectRandomHood(remainingNames) {
-  randNum = Math.floor(Math.random() * remainingNames.length)
-  return remainingNames[randNum];
-}
-
-
-
 
