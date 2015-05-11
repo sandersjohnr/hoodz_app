@@ -22,13 +22,17 @@ var svg = d3.select('#map')
             .attr('width', width)
             .attr('height', height);
 
+// initialize UI to hidden
 $('#guess-ui').hide();
 
-// GRAB GEOJSON AND GET CRACKING
 
+
+
+// GRAB GEOJSON AND ADD PATH ELEMENTS TO DOM
 d3.json("../assets/bklyn.geojson", function(error, json) {
   var hoods_data = json.features;
-  // remove jamaica bay and marine-park for v1.0
+
+  // Remove jamaica bay and marine-park from hoods_data for v1.0
   var filteredHoodsData = hoods_data.filter(function(hood) {
     return (hood.properties.neighborhood != 'Jamaica Bay') && (hood.properties.neighborhood != 'Marine Park')
   });
@@ -55,9 +59,6 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
   var hoods = svg.selectAll('path')
       .data(hoods_data)
       .enter()
-      // .append('g').attr('class', function(d) {
-      //   return hoodToClassName(d.properties.neighborhood);
-      // })
       .append('path')
       .attr('class', function(d) {
         return 'hood ' + hoodToClassName(d.properties.neighborhood);
@@ -73,83 +74,114 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
       })
       .attr('data-hoodname', function(d) {
         return d.properties.neighborhood;
+      })
+      .attr('data-hoodclass', function(d) {
+        return hoodToClassName(d.properties.neighborhood);
       });
 
 
-  // Greenify the free spaces
+  // Greenify the parks
   var greenery = 'hsl(80, 80%, 80%)';
-  d3.selectAll('.jamaica-bay').attr('data-basecolor', greenery).attr('fill', greenery)
-  d3.selectAll('.marine-park').attr('data-basecolor', greenery).attr('fill', greenery)
+  // d3.selectAll('.jamaica-bay').attr('data-basecolor', greenery).attr('fill', greenery)
+  // d3.selectAll('.marine-park').attr('data-basecolor', greenery).attr('fill', greenery)
   d3.select('.prospect-park').attr('data-basecolor', greenery).attr('fill', greenery)
   d3.select('.green-wood-cemetery').attr('data-basecolor', greenery).attr('fill', greenery)
   d3.select('.floyd-bennett-field').attr('data-basecolor', greenery).attr('fill', greenery)
-  // hoods # 34-49 are all Jamaica Bay
-  // hoods # 52-54 are all Marine Park
-  // hood # 32 is Green-Wood Cemetery
-  // hood # 61 is Prospect Park
+  // hoods # 34-49 are all Jamaica Bay; hoods # 52-54 are all Marine Park; hood # 32 is Green-Wood Cemetery; hood # 61 is Prospect Park
 
 
-  // Initialize hood quiz list
+
+  // ---------------------------------------------------------------------
+  // INITIALIZE HOOD NAMES BEFORE PLAYING ROUND
+  // ---------------------------------------------------------------------
+
+  // Initialize hood quiz list; check to make sure only one entry even if 
+  // multiple paths exist for one hood
   var hoodQuizNames = [];
-  d3.selectAll('.hood').each(function(p) {
-    currentName = p.properties.neighborhood
-    if ( hoodQuizNames.indexOf(currentName) == -1 ) {
-      hoodQuizNames.push(currentName)
-    } 
-  });
-
+    d3.selectAll('.hood').each(function(d) {
+      currentName = d.properties.neighborhood
+      if ( hoodQuizNames.indexOf(currentName) == -1 ) {
+        hoodQuizNames.push(currentName)
+      } 
+    });
+  
+  // Initalize remaining names and classes arrays before main game loop
   var remainingNames = hoodQuizNames;
-  // Initalize remaining names array before main game loop
   var remainingClasses = hoodQuizNames.map(function(name) {
     return hoodToClassName(name);
   }); 
 
-  // ------------------------------------------------------------
-  // START GAME
-  // ------------------------------------------------------------
 
-  playRound();
+  // PLAY ROUND
+  // ---------------------------------------------------------------------
+  playRound(selectRandomHood(remainingNames));
 
-
-
-  function playRound () {
+  function playRound(currentQuizName) {
+    
+    // TRIES ------ test phase
+    // Begin tries
+    playerTry(3);
+    function playerTry (triesLeft) {
+      if (triesLeft > 0) {
+        console.log('tries left: ', triesLeft)
+        playerTry(triesLeft - 1);
+      } else {
+        console.log('returning')
+        return;
+      }
+    } //end player try
 
     // select random hood for quiz
-    var currentQuizName = selectRandomHood(remainingNames);
+    // var currentQuizName = selectRandomHood(remainingNames);
     var currentQuizClass = hoodToClassName(currentQuizName);
 
-    // fill current quiz path with yellow
-    // setPathToColor(currentQuizClass, 'yellow');
-
-    // display guess UI
-    $('#guess-ui').show();
-    $('#guess-ui').empty().text("Find:  " + currentQuizName)
-    var currentGuess = '';
+    // display name of hood to find
+    $('#guess-ui').show()
+                  .empty()
+                  .text("Find:  " + currentQuizName)
+                  .append('<p id="test">TEST</p>')
 
     // listen for user to submit guess by clicking a hood
     d3.selectAll('.hood').on('click', checkGuess)
+    d3.select('#test').on('click', test);
 
+
+
+
+    // CHECK GUESS
+    // ---------------------------------------------------------------------
     function checkGuess() {
-      var guessedName = d3.select(this).attr('data-hoodname');
-      var guessedClass = hoodToClassName(guessedName)
+      // Turn off event listeners
+      console.log('checkGuess fired')
+      d3.selectAll('.hood').on('click', null);
+      // Name of clicked hood becomes guess
+      var clickedHood = d3.select(this)
+
+      var guessedName = clickedHood.attr('data-hoodname');
+      var guessedClass = hoodToClassName(guessedName);
+      // Is guess correct?
+      console.log(guessedClass, currentQuizClass)
       if ( guessedClass == currentQuizClass ) {
         // console.log('correct guess!');
         setPathToColor(currentQuizClass, 'lime');
+        // when correct, remove guessed hood from hood list array
+        var hoodIndex = remainingNames.indexOf(currentQuizName);  
+          if (hoodIndex !== -1) {
+            remainingNames.splice(hoodIndex, 1);
+          }
       } else {
         // console.log('incorrect, dude');
-        setPathToColor(currentQuizClass, 'red');
+        flashColor(guessedClass, 'yellow');
+        // increment missed for current hood
+        // how to trigger a post request to database?
       }
 
-      // remove guessed hood from hood list array
-      var hoodIndex = remainingNames.indexOf(currentQuizName);  
-        if (hoodIndex !== -1) {
-          remainingNames.splice(hoodIndex, 1);
-        }
       // console.log(remainingNames)
       // console.log(remainingNames.length)
       
       if (remainingNames.length > 0) {
-        playRound();
+
+        playRound(selectRandomHood(remainingNames));
       
       } else {
         // End game, remove event listeners
@@ -163,7 +195,12 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
     }
   }  
 
-  // CREATE TOOL TIP?
+  
+
+
+
+
+
 
 
 
@@ -172,11 +209,10 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
   // MOUSE EVENTS
   // hoods.on('click', hoodClick);
   // hoods.on('mouseover', hoodMouseover);
-  hoods.on('mouseenter', hoodMouseenter);
-  hoods.on('mouseleave', hoodMouseleave);
+  // hoods.on('mouseenter', hoodMouseenter);
+  // hoods.on('mouseleave', hoodMouseleave);
 
-
-}); // END OF MAIN FUNCTION ############################################
+}); // END OF GEOJSON FUNCTION ############################################
 
 
 
@@ -186,9 +222,25 @@ d3.json("../assets/bklyn.geojson", function(error, json) {
 
 // HELPER FUNCTIONS ====================================================
 
+function flashColor(pathClass, color) {
+  var currentPath = d3.select('.' + pathClass)
+  var currentFill = currentPath.attr('fill');
+  currentPath.transition()
+             .duration(50)
+             .attr('fill', color)
+             .transition()
+             .duration(50)
+             .attr('fill', currentFill)
+             .transition()
+             .duration(50)
+             .attr('fill', color)
+             .transition()
+             .duration(50)
+             .attr('fill', currentFill)
+}
+
 function setPathToColor(pathClass, color) {
   d3.select('.' + pathClass).attr('fill', color);
-
 }
 
 function hoodToClassName (hoodName) {
@@ -205,10 +257,8 @@ function selectRandomHood(remainingNames) {
   return remainingNames[randNum];
 }
 
-
-
 // Aesthetic UI selection events
-
+//------------------------------
 function hoodClick() {
   var clickedHood = d3.select(this);
 
@@ -242,7 +292,6 @@ function hoodMouseover() {
 };
 
 function hoodMouseleave() {
-  
   d3.select(this)
       .transition()
       .duration(500)
