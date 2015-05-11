@@ -13,7 +13,7 @@ class SessionsController < ApplicationController
 
     if user && user.authenticate(password)
       session[:current_user] = user.id
-      redirect_to root_path
+      redirect_to nyc_index_path
     else
       render :new
     end

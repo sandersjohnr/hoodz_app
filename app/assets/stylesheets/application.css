@@ -1,3 +1,59 @@
+body {
+  font-family: Lato, sans-serif;
+  color: white;
+  background-color: #3D4454;
+  text-shadow: 1px 1px 3px black;
+}
+a {
+  text-decoration: none;
+  color: cornflowerblue;
+}
+h1 {
+  position: fixed;
+  display: inline-block;
+  top: -15px;
+  left: 20px;
+  font-size: 40pt;
+}
+#welcome {
+  position: fixed;
+  top: 80px;
+  left: 20px; 
+  font-size: 18pt;
+}
+#guess-ui {
+  position: fixed;
+  left: 20px;
+  top: 200px;
+}
+div#login {
+  position: fixed;
+  left: 300px;
+  top: 40px;
+  font-size: 20pt;
+}
+form {
+ display: inline-block;
+ margin-top: 100px;
+ margin-left: 15px;
+ font-size: 18pt;
+}
+input {
+  height: 22px;
+  box-radius: 30px;
+  font-size: 15pt;
+}
+
+
+/* --------- D3 ELEMENTS --------- */
+svg {
+  margin-top: 40px;  
+}
+path:hover {
+  stroke-width: 3;
+  stroke: cornflowerblue;
+}
+
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
  * listed below.
@@ -9,72 +65,4 @@
  * compiled file so the styles you add here take precedence over styles defined in any styles
  * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
  * file per style scope.
- *
-
-
- */
-
-
-body {
-  font-family: Lato, sans-serif;
-  color: white;
-  background-color: grey;
-  text-shadow: 1px 1px 3px black;
-}
-
-a {
-  text-decoration: none;
-  color: cornflowerblue;
-}
-
-h1 {
-  position: fixed;
-  top: 0px;
-  left: 10px;
-}
-
-#guess-ui {
-  position: fixed;
-  left: 350px;
-  top: 70px;
-}
-
-#welcome {
-  position: fixed;
-  top: 35px;
-  left: 150px;
-}
-
-h1 {
-  display: inline-block;
-
-}
-
-form {
- display: inline-block;
- margin-top: 50px;
- margin-left: 5px;
-}
-svg {
-  margin-top: 50px;  
-}
-
-div#login {
-  position: fixed;
-  left: 300px;
-
-}
-
-path {
-  /*stroke: darkblue;*/
-  /*stroke-width: 1;*/
-  /*fill: steelblue;*/
-}
-
-path:hover {
-  stroke-width: 2;
-}
-
-path.clicked {
-  /*fill: yellow;*/
-}
+*/
