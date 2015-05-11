@@ -9,8 +9,6 @@ var svg = d3.select('#nyc-map')
             .attr('width', width)
             .attr('height', height);
 
-// $('#map').hide();
-
 // GRAB GEOJSON AND ADD PATH ELEMENTS TO DOM
 d3.json("../assets/nyc.geojson", function(error, json) {
   var nyc_data = json.features;
@@ -30,7 +28,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
   bronx_data = nyc_data.filter(function (hood) {
     return ( hood.properties.borough == 'Bronx');
   });
-
 
   var wOffset = 0;
   var hOffset = 230;
@@ -61,12 +58,12 @@ d3.json("../assets/nyc.geojson", function(error, json) {
       .append('p').text(function(d) { return d; })
       .attr('class', function(d) { return nameToClass(d); });
 
-
   menuItems.on('click', function(d) {
     // turn off event listeners once clicked
     menuItems.on('click', null);
     menuItems.selectAll('p').attr('display','none');
     d3.selectAll('path').remove();
+    // gotta make the hoods
     var hoods = d3ifyHoods(manhattan_data);
     // Initalize remaining names and classes arrays before main game loop
     var hoodQuizNames = [];
@@ -76,9 +73,9 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         hoodQuizNames.push(currentName);
       } 
     });
-    
 
     console.log(hoodQuizNames)
+    // Start recursive playRound func
     playRound(hoodQuizNames);
   });
 

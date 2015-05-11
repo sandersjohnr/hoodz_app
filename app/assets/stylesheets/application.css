@@ -55,11 +55,12 @@ svg {
   margin-top: 40px;  
 }
 path {
-  /*transition: all .2s ease-in-out;*/
+  transition: all .2s ease-in-out;
 }
 path:hover {
   stroke-width: 2;
   stroke: cornflowerblue;
+  transform: 
 }
 
 
