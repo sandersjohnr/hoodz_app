@@ -24,7 +24,7 @@ h1 {
 #guess-ui {
   position: fixed;
   left: 20px;
-  top: 200px;
+  top: 350px;
 }
 #nyc-menu {
   position: fixed;
@@ -55,12 +55,11 @@ svg {
   margin-top: 40px;  
 }
 path {
-  transition: all .2s ease-in-out;
+  /*transition: all .2s ease-in-out;*/
 }
 path:hover {
   stroke-width: 2;
-  stroke: cornflowerblue;
-  transform: 
+  stroke: cornflowerblue; 
 }
 
 

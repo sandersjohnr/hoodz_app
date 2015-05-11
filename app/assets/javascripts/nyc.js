@@ -1,6 +1,6 @@
 // SVG dimensions
 var width = 800;
-var height = 700;
+var height = 750;
 
 // create svg element
 var svg = d3.select('#nyc-map')
@@ -13,27 +13,27 @@ var svg = d3.select('#nyc-map')
 d3.json("../assets/nyc.geojson", function(error, json) {
   var nyc_data = json.features;
   // Parse NYC data into separate boroughs
-  manhattan_data = nyc_data.filter(function (hood) {
+  var manhattan_data = nyc_data.filter(function (hood) {
     return ( hood.properties.borough == 'Manhattan' );
   });
-  queens_data = nyc_data.filter(function (hood) {
+  var queens_data = nyc_data.filter(function (hood) {
     return ( hood.properties.borough == 'Queens' );
   });
-  staten_data = nyc_data.filter(function(hood) {
+  var staten_data = nyc_data.filter(function(hood) {
     return ( hood.properties.borough == 'Staten Island');
   });
-  brooklyn_data = nyc_data.filter(function (hood) {
+  var brooklyn_data = nyc_data.filter(function (hood) {
     return ( hood.properties.borough == 'Brooklyn');
   });
-  bronx_data = nyc_data.filter(function (hood) {
+  var bronx_data = nyc_data.filter(function (hood) {
     return ( hood.properties.borough == 'Bronx');
   });
 
-  var wOffset = 0;
+  var wOffset = 40;
   var hOffset = 230;
   // find centroid of geojson for projection position
   var center = d3.geo.centroid(json)
-  var scale = 6.3 * 10000;
+  var scale = 7.2* 10000;
   var offset = [ width / 2 + wOffset, height / 2 - hOffset];  
   var projection = d3.geo.mercator()
       .scale(scale)
@@ -48,7 +48,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
   
 
-  // MENU
+  // BOROUGH MENU
   var menuItems = ['Manhattan','Brooklyn','Queens','Bronx','Staten Island'];
 
   var menu = d3.select('#nyc-menu');
@@ -61,10 +61,54 @@ d3.json("../assets/nyc.geojson", function(error, json) {
   menuItems.on('click', function(d) {
     // turn off event listeners once clicked
     menuItems.on('click', null);
-    menuItems.selectAll('p').attr('display','none');
+    var menuClass = d3.select(this).attr('class'); 
     d3.selectAll('path').remove();
+
+    switch(menuClass) {
+      case 'manhattan':
+        wOffset = 140;
+        hOffset = 230;
+        hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
+        projection.translate(hoodOffset)
+        projection.scale(15.4 * 10000);
+        var hoods = d3ifyHoods(manhattan_data);
+        break;
+      case 'brooklyn':
+        wOffset = 100;
+        hOffset = 725;
+        hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
+        projection.translate(hoodOffset)
+        projection.scale(16.5 * 10000);
+        var hoods = d3ifyHoods(brooklyn_data);
+        break;
+      case 'queens':
+        wOffset = -130;
+        hOffset = 440;
+        hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
+        projection.translate(hoodOffset)
+        projection.scale(11.5 * 10000);
+        var hoods = d3ifyHoods(queens_data);
+        break;
+      case 'bronx':
+        wOffset = -200;
+        hOffset = -50;
+        hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
+        projection.translate(hoodOffset)
+        projection.scale(20 * 10000);
+        var hoods = d3ifyHoods(bronx_data);
+        break;
+      case 'staten-island':
+        wOffset = 650;
+        hOffset = 950;
+        hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
+        projection.translate(hoodOffset)
+        projection.scale(16 * 10000);
+        var hoods = d3ifyHoods(staten_data);
+        break;
+    }
+
+
     // gotta make the hoods
-    var hoods = d3ifyHoods(manhattan_data);
     // Initalize remaining names and classes arrays before main game loop
     var hoodQuizNames = [];
     d3.selectAll('.hood').each(function(d) {
@@ -111,7 +155,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
           return d.properties.borough;
         });
 
-    projection.scale(15 * 10000);
     return hoods;
   }
 
@@ -123,7 +166,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
   // Initialize hood quiz list; check to make sure only one entry even if 
   // multiple paths exist for one hood
-
 
 
   // PLAY ROUND
@@ -155,11 +197,11 @@ d3.json("../assets/nyc.geojson", function(error, json) {
                   .text('NOW FIND: ')
                   .append('p')
                   .text(currentQuizName)
-                  .style('font-size', '100px')
+                  .style('font-size', '80px')
                   .transition()
                   .duration(2000)
-                  .attr('top', '-800px')
-                  .style('font-size', '18px');
+                  .attr('top', '-700px')
+                  .style('font-size', '30px');
 
     // listen for user to submit guess by clicking a hood
     d3.selectAll('.hood').on('click', checkGuess);
@@ -175,7 +217,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
       var guessedName = clickedHood.attr('data-hoodname');
       var guessedClass = nameToClass(guessedName);
       // Is guess correct?
-      console.log(guessedClass, currentQuizClass)
+      // console.log(guessedClass, currentQuizClass)
       if ( guessedClass == currentQuizClass ) {
         flashColor(currentQuizClass, 'lime');
         // when correct, remove guessed hood from hood list array
@@ -185,9 +227,11 @@ d3.json("../assets/nyc.geojson", function(error, json) {
           }
       } else {
         flashColor(currentQuizClass, 'yellow');
-
         // ##### increment missed for current hood
         // ##### how to trigger a post request to database?
+        // $.post('/path', data: {
+
+        // });
       }
       
       if (remainingNames.length > 0) {
@@ -227,19 +271,19 @@ function flashColor(pathClass, color) {
              .attr('fill', color)
              .transition()
              .duration(50)
-             .attr('fill', currentFill)
+             .attr('fill', 'white')
              .transition()
              .duration(50)
              .attr('fill', color)
              .transition()
              .duration(50)
-             .attr('fill', currentFill)
+             .attr('fill', 'white')
              .transition()
              .duration(50)
              .attr('fill', color)
              .transition()
              .duration(50)
-             .attr('fill', currentFill)
+             .attr('fill', 'white')
              .transition()
              .duration(50)
              .attr('fill', color)
@@ -288,9 +332,6 @@ function hoodClick() {
       .attr('fill', basecolor)
   }
 };
-
-
-
 
 function hoodMouseover() {
   var current = d3.select(this);
