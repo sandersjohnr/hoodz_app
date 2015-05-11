@@ -12,9 +12,9 @@
 
 <% if current_user %>
   <span id="welcome">
-    Welcome back, <%= current_user.first_name %>!
+    Welcome back, <%= current_user.first_name %>! <br>
     <%= link_to 'Log Out', sessions_path, method: :delete %>
-    <p id="start-game"></p><%= link_to 'Start Game', map_index_path %>
+    <p id="start-game"></p><%= link_to 'Start Game', nyc_index_path %>
     <!-- <div id="map"></div> -->
   </span>
 <% else %>
@@ -23,6 +23,9 @@
     <%= link_to 'Log In', sessions_new_path %>
   </div>
 <% end %>
+
+<div id="guess-ui"></div>
+
 
 <%= yield %>
 

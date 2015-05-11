@@ -26,6 +26,11 @@ h1 {
   left: 20px;
   top: 200px;
 }
+#nyc-menu {
+  position: fixed;
+  left: 20px;
+  top: 270px;
+}
 div#login {
   position: fixed;
   left: 300px;
