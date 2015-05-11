@@ -12,9 +12,17 @@
 
 <% if current_user %>
   <span id="welcome">
-    Welcome back, <%= current_user.first_name %>! <br>
+    Welcome back, <%= current_user.first_name %>!
     <%= link_to 'Log Out', sessions_path, method: :delete %>
     <p id="start-game"></p><%= link_to 'Start Game', nyc_index_path %>
+    <p class="select">Select a Borough:</h3>
+    <p class="1">Manhattan</p>
+    <p class="2">Brooklyn</p>
+    <p class="3">Queens</p>
+    <p class="4">Bronx</p>
+    <p class="5">Staten Island</p>
+
+
     <!-- <div id="map"></div> -->
   </span>
 <% else %>

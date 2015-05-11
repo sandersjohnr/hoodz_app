@@ -46,120 +46,140 @@ d3.json("../assets/nyc.geojson", function(error, json) {
   // create path
   var path = d3.geo.path().projection(projection);
 
+  var hoods = d3ifyHoods(nyc_data, 6.3);
+  // create and append hood shapes to SVG element
+
+  
+
+  // MENU
   var menuItems = ['Manhattan','Brooklyn','Queens','Bronx','Staten Island'];
 
   var menu = d3.select('#nyc-menu');
   var menuItems = menu.selectAll('p')
       .data(menuItems)
       .enter()
-      .append('p').text(function(d) {return d;})
-      .attr('class', function(d) {return nameToClass(d);});
-
-  menuItems.on('click', startBoro);
-
-  // creating color scheme for main map
-  var hslScale = d3.scale.linear()
-                 .domain([0, nyc_data.length])
-                 .range([40, 60]);
-
-  // create and append hood shapes to SVG element
-  var hoods = svg.selectAll('path')
-      .data(nyc_data)
-      .enter()
-      .append('path')
-      .attr('class', function(d) {
-        return 'hood ' + nameToClass(d.properties.neighborhood) + ' boro-' + nameToClass(d.properties.borough);
-      })
-      .attr('d', path)
-      .attr('stroke', 'cornflowerblue')
-      .attr('stroke-width','1')
-      .attr('fill', function(d,i) { 
-        return 'hsl(' + hslScale(i) + ',80%,75%)'; 
-      })
-      .attr('data-basecolor', function(d,i) { 
-        return 'hsl(' + hslScale(i) + ',80%,75%)'; 
-      })
-      .attr('data-hoodname', function(d) {
-        return d.properties.neighborhood;
-      })
-      .attr('data-hoodclass', function(d) {
-        return nameToClass(d.properties.neighborhood);
-      })
-      .attr('data-borough', function(d) {
-        return d.properties.borough;
-      });
+      .append('p').text(function(d) { return d; })
+      .attr('class', function(d) { return nameToClass(d); });
 
 
-// ---------------------------------------------------------------------
-  // INITIALIZE HOOD NAMES BEFORE PLAYING ROUND
-  // ---------------------------------------------------------------------
-
-  // Initialize hood quiz list; check to make sure only one entry even if 
-  // multiple paths exist for one hood
-  var hoodQuizNames = [];
+  menuItems.on('click', function(d) {
+    // turn off event listeners once clicked
+    menuItems.on('click', null);
+    menuItems.selectAll('p').attr('display','none');
+    d3.selectAll('path').remove();
+    var hoods = d3ifyHoods(manhattan_data);
+    // Initalize remaining names and classes arrays before main game loop
+    var hoodQuizNames = [];
     d3.selectAll('.hood').each(function(d) {
       currentName = d.properties.neighborhood
       if ( hoodQuizNames.indexOf(currentName) == -1 ) {
-        hoodQuizNames.push(currentName)
+        hoodQuizNames.push(currentName);
       } 
     });
-  
-  // Initalize remaining names and classes arrays before main game loop
-  var remainingNames = hoodQuizNames;
-  var remainingClasses = hoodQuizNames.map(function(name) {
-    return nameToClass(name);
-  }); 
+    
+
+    console.log(hoodQuizNames)
+    playRound(hoodQuizNames);
+  });
+
+  function d3ifyHoods(boro_data) {
+    // creating color scheme for main map
+    var hslScale = d3.scale.linear()
+                   .domain([0, boro_data.length])
+                   .range([40, 60]);
+
+    var hoods = svg.selectAll('path')
+        .data(boro_data)
+        .enter()
+        .append('path')
+        .attr('class', function(d) {
+          return 'hood ' + nameToClass(d.properties.neighborhood) + ' boro-' + nameToClass(d.properties.borough);
+        })
+        .attr('d', path)
+        .attr('stroke', 'cornflowerblue')
+        .attr('stroke-width','1')
+        .attr('fill', function(d,i) { 
+          return 'hsl(' + hslScale(i) + ',65%,70%)'; 
+        })
+        .attr('data-basecolor', function(d,i) { 
+          return 'hsl(' + hslScale(i) + ',65%,70%)'; 
+        })
+        .attr('data-hoodname', function(d) {
+          return d.properties.neighborhood;
+        })
+        .attr('data-hoodclass', function(d) {
+          return nameToClass(d.properties.neighborhood);
+        })
+        .attr('data-borough', function(d) {
+          return d.properties.borough;
+        });
+
+    projection.scale(15 * 10000);
+    return hoods;
+  }
+
+  // ---------------------------------------------------------------------
+  // INITIALIZE HOOD NAMES BEFORE PLAYING ROUND
+  // ---------------------------------------------------------------------
+
+  // PLAY GAME FUNCTION???
+
+  // Initialize hood quiz list; check to make sure only one entry even if 
+  // multiple paths exist for one hood
+
 
 
   // PLAY ROUND
   // ---------------------------------------------------------------------
-  playRound(selectRandomHood(remainingNames));
 
-  function playRound(currentQuizName) {
-    
+  function playRound(remainingNames) {
+    var currentQuizName = selectRandomHood(remainingNames);
+    var currentQuizClass = nameToClass(currentQuizName);
+
     // TRIES ------ test phase
     // Begin tries
-    playerTry(3);
-    function playerTry (triesLeft) {
-      if (triesLeft > 0) {
-        console.log('tries left: ', triesLeft)
-        playerTry(triesLeft - 1);
-      } else {
-        console.log('returning')
-        return;
-      }
-    } //end player try
-
-    // select random hood for quiz
-    // var currentQuizName = selectRandomHood(remainingNames);
-    var currentQuizClass = nameToClass(currentQuizName);
+    // playerTry(3);
+    // function playerTry (triesLeft) {
+    //   if (triesLeft > 0) {
+    //     console.log('tries left: ', triesLeft)
+    //     playerTry(triesLeft - 1);
+    //   } else {
+    //     console.log('returning')
+    //     return;
+    //   }
+    // } //end player try
 
     // display name of hood to find
     $('#guess-ui').show()
-                  .empty()
-                  .text("Find:  " + currentQuizName)
-                  .append('<p id="test">TEST</p>')
+                  .empty();
+
+    d3.select('#guess-ui')
+                  .append('p')
+                  .text('NOW FIND: ')
+                  .append('p')
+                  .text(currentQuizName)
+                  .style('font-size', '100px')
+                  .transition()
+                  .duration(2000)
+                  .attr('top', '-800px')
+                  .style('font-size', '18px');
 
     // listen for user to submit guess by clicking a hood
-    d3.selectAll('.hood').on('click', checkGuess)
-    d3.select('#test').on('click', test);
-
+    d3.selectAll('.hood').on('click', checkGuess);
 
     // CHECK GUESS
     // ---------------------------------------------------------------------
     function checkGuess() {
-      // Turn off event listeners
       console.log('checkGuess fired')
+      // Turn off event listeners
       d3.selectAll('.hood').on('click', null);
       // Name of clicked hood becomes guess
       var clickedHood = d3.select(this)
-
       var guessedName = clickedHood.attr('data-hoodname');
       var guessedClass = nameToClass(guessedName);
       // Is guess correct?
       console.log(guessedClass, currentQuizClass)
       if ( guessedClass == currentQuizClass ) {
-        // console.log('correct guess!');
         flashColor(currentQuizClass, 'lime');
         // when correct, remove guessed hood from hood list array
         var hoodIndex = remainingNames.indexOf(currentQuizName);  
@@ -167,16 +187,14 @@ d3.json("../assets/nyc.geojson", function(error, json) {
             remainingNames.splice(hoodIndex, 1);
           }
       } else {
-        // console.log('incorrect, dude');
-        flashColor(guessedClass, 'yellow');
+        flashColor(currentQuizClass, 'yellow');
 
         // ##### increment missed for current hood
         // ##### how to trigger a post request to database?
       }
       
       if (remainingNames.length > 0) {
-
-        playRound(selectRandomHood(remainingNames));
+        playRound(remainingNames);
       
       } else {
         // End game, remove event listeners
@@ -186,13 +204,11 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
     }
   }  
-
-
-
+  hoods.on('mouseenter',hoodMouseover);
+  // hoods.on('mouseleave',hoodMouseleave);
 
 });
-
-
+     
 
 // GAME FUNCTION ====================================================
 
@@ -210,6 +226,12 @@ function flashColor(pathClass, color) {
   var currentPath = d3.selectAll('.' + pathClass)
   var currentFill = currentPath.attr('fill');
   currentPath.transition()
+             .duration(50)
+             .attr('fill', color)
+             .transition()
+             .duration(50)
+             .attr('fill', currentFill)
+             .transition()
              .duration(50)
              .attr('fill', color)
              .transition()
@@ -270,16 +292,28 @@ function hoodClick() {
   }
 };
 
+
+
+
 function hoodMouseover() {
   var current = d3.select(this);
-  var currentFill = current.attr('fill');
+  var baseFill = current.attr('data-basecolor');
   var current = d3.select(this)
       .transition()
       .duration(100)
       .attr('fill','yellow')
       .transition()
       .duration(500)
-      .attr('fill', currentFill)   
+      .attr('fill','orange')
+      .transition()
+      .duration(1000)
+      .attr('fill','red')
+      .transition()
+      .duration(1500)
+      .attr('fill','purple')
+      .transition()
+      .duration(2000)
+      .attr('fill', baseFill)   
 };
 
 function hoodMouseleave() {
