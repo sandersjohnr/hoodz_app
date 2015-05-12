@@ -14,7 +14,7 @@
   <span id="welcome">
     Welcome back, <%= current_user.first_name %>!
     <%= link_to 'Log Out', sessions_path, method: :delete %>
-    <p id="start-game"><%= link_to 'Start Game', nyc_index_path %></p>
+    <p id="main-menu"><%= link_to 'Main Menu', nyc_index_path %> </p>
   </span>
 <% else %>
   <div id="login">
@@ -24,11 +24,10 @@
 <% end %>
 
 <div id="guess-ui"></div>
-
+<div id="tool-tip"></div>
+<div id="mode-menu"></div>
 
 <%= yield %>
-
-
 
 </body>
 </html>

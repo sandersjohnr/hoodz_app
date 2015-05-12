@@ -13,34 +13,48 @@ h1 {
   display: inline-block;
   top: -15px;
   left: 20px;
-  font-size: 40pt;
+  font-size: 8vh;
 }
 #welcome {
   position: fixed;
-  top: 80px;
-  left: 20px; 
-  font-size: 18pt;
+  top: 45px;
+  left: 65vw; 
+  font-size: 2vw;
 }
-#guess-ui {
+/*#guess-ui {
   position: fixed;
   left: 20px;
-  top: 350px;
+  top: 250px;
+}*/
+#main-menu {
+  position: fixed;
+  left: 50px;
+  top: 80px;
+  font-size: 30px;
 }
 #nyc-menu {
   position: fixed;
-  left: 700px;
-  top: 30px;
+  left: 80px;
+  top: 145px;
+  font-size: 20px;
+}
+#mode-menu, #guess-ui {
+  position: fixed;
+  left: 100px;
+  top: 165px;
+  font-size: 20px;
 }
 div#login {
   position: fixed;
   left: 300px;
-  top: 40px;
+  top: 55px;
   font-size: 20pt;
 }
 form {
  display: inline-block;
- margin-top: 100px;
- margin-left: 15px;
+ position: fixed;
+ top: 25vh;
+ left: 10vw;
  font-size: 18pt;
 }
 input {
@@ -52,7 +66,8 @@ input {
 
 /* --------- D3 ELEMENTS --------- */
 svg {
-  margin-top: 40px;  
+  margin:0 auto;
+  /*border: 1px solid red;*/
 }
 path {
   /*transition: all .2s ease-in-out;*/
@@ -61,6 +76,7 @@ path:hover {
   stroke-width: 2;
   stroke: cornflowerblue; 
 }
+
 
 
 /*

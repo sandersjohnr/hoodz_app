@@ -13,4 +13,14 @@ class MapController < ApplicationController
       }
     end
   end
+
+
+  def scrape
+
+    mechanize = Mechanize.new
+
+    
+    page = mechanize.get
+    
+  end
 end
