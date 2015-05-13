@@ -70,15 +70,11 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
     switch(menuClass) {
       case 'manhattan':
-        wOffset = 100;
+        wOffset = 80;
         hOffset = 230;
         hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
         projection.translate(hoodOffset)
         projection.scale(15.4 * 10000);
-        debugger;
-        projection.rotate([0,0,-0.01])
-
-
         var hoods = d3ifyHoods(manhattan_data);
         break;
       case 'brooklyn':
@@ -169,12 +165,14 @@ d3.json("../assets/nyc.geojson", function(error, json) {
     };
 
     function turnOnToolTips () {
-      d3.selectAll('.hood')
+      var learnHoods = d3.selectAll('.hood')
         .on('mouseenter', function(d) {
           d3.selectAll('.tooltip').remove();
           var centroid = path.centroid(d);
           var enteredHood = d3.select(this);
+          learnHoods.attr('fill', 'darkgrey');
           enteredHood.attr('fill', 'orchid');
+
           svg.append('text')
               .attr('class', 'tooltip shadow')
               .attr('x', centroid[0] - 40)
@@ -186,7 +184,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
               .attr('text-anchor', 'middle')
               .text(d.properties.neighborhood);
               
-          var rectWidth = 200;
+          var rectWidth = 250;
           var rectHeight = 300;
           svg.append('rect')
               .attr('class', 'tooltip')
@@ -194,7 +192,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
               .attr('height', rectHeight)
               .attr('width', rectWidth)
               .attr('x', 30)
-              .attr('y', 90)
+              .attr('y', 400)
               .attr('stroke', 'white')
               .attr('stroke-width', 2)
               .attr('opacity', 0.3)

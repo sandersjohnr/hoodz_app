@@ -4,9 +4,7 @@ class MapController < ApplicationController
   end
 
   def data  
-    
     dataset = [1,2,3,4,5]
-
     respond_to do |format|
       format.json {
         render :json => dataset
@@ -16,11 +14,7 @@ class MapController < ApplicationController
 
 
   def scrape
-
-    mechanize = Mechanize.new
-
-    
+    mechanize = Mechanize.new    
     page = mechanize.get
-    
   end
 end
