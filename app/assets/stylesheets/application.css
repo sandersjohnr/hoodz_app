@@ -3,42 +3,53 @@ body {
   color: white;
   background-color: #3D4454;
   text-shadow: 1px 1px 3px black;
+  cursor: pointer;
 }
-a {
+a, p {
   text-decoration: none;
+  color: white;
+  cursor: pointer;
+}
+a:hover, p:hover {
   color: cornflowerblue;
 }
+
 h1 {
   position: fixed;
   display: inline-block;
   top: -15px;
-  left: 20px;
+  left: 2vw;
   font-size: 8vh;
+}
+p#logout {
+  position: fixed;
+  top: 25px;
+  right: 5vw;
 }
 #welcome {
   position: fixed;
-  top: 45px;
-  left: 65vw; 
-  font-size: 2vw;
+  top: 55px;
+  left: 300px; 
+  font-size: 3vh;
 }
-/*#guess-ui {
+#guess-ui {
   position: fixed;
-  left: 20px;
-  top: 250px;
-}*/
+  left: 35px;
+  top: 140px;
+}
 #main-menu {
   position: fixed;
-  left: 50px;
+  left: 40px;
   top: 80px;
   font-size: 30px;
 }
 #nyc-menu {
   position: fixed;
-  left: 80px;
+  left: 60px;
   top: 145px;
   font-size: 20px;
 }
-#mode-menu, #guess-ui {
+#mode-menu {
   position: fixed;
   left: 100px;
   top: 165px;
@@ -62,6 +73,11 @@ input {
   box-radius: 30px;
   font-size: 15pt;
 }
+.points {
+  position: fixed;
+  left: 40px;
+  top: 400px;
+}
 
 
 /* --------- D3 ELEMENTS --------- */
@@ -70,10 +86,10 @@ svg {
   /*border: 1px solid red;*/
 }
 path {
-  /*transition: all .2s ease-in-out;*/
+  cursor: pointer;
 }
 path:hover {
-  stroke-width: 2;
+  stroke-width: 2.3;
   stroke: cornflowerblue; 
 }
 
