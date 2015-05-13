@@ -33,7 +33,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
   var wOffset = 40;
   var hOffset = 200;
-  // find centroid of geojson for projection position
   var center = d3.geo.centroid(json)
   var scale = 7 * 10000;
   var offset = [ width / 2 + wOffset, height / 2 - hOffset];  
@@ -61,16 +60,16 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
   // Listen for click on Boro menu
   boroMenu.on('click', function(d) {
-    // turn off event listeners once clicked
+    // Turn off event listeners once clicked
     boroMenu.on('click', null);
     boroMenu.style('display', 'none');
     var menuClass = d3.select(this).attr('class'); 
     d3.selectAll('.tooltip').remove();
     d3.selectAll('path').remove();
-
+    // Create appropriate scales and offsets for boro views
     switch(menuClass) {
       case 'manhattan':
-        wOffset = 80;
+        wOffset = 180;
         hOffset = 230;
         hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
         projection.translate(hoodOffset)
@@ -78,7 +77,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         var hoods = d3ifyHoods(manhattan_data);
         break;
       case 'brooklyn':
-        wOffset = 60;
+        wOffset = 160;
         hOffset = 725;
         hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
         projection.translate(hoodOffset)
@@ -86,7 +85,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         var hoods = d3ifyHoods(brooklyn_data);
         break;
       case 'queens':
-        wOffset = -90;
+        wOffset = -55;
         hOffset = 440;
         hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
         projection.translate(hoodOffset)
@@ -94,8 +93,8 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         var hoods = d3ifyHoods(queens_data);
         break;
       case 'bronx':
-        wOffset = -190;
-        hOffset = -50;
+        wOffset = -170;
+        hOffset = -60;
         hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
         projection.translate(hoodOffset)
         projection.scale(20 * 10000);
@@ -111,8 +110,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         break;
     }
 
-    // gotta make the hoods
-    // Initalize remaining names and classes arrays before main game loop
+    // Initalize remaining names and classes arrays 
     var hoodQuizNames = [];
     d3.selectAll('.hood').each(function(d) {
       currentName = d.properties.neighborhood
@@ -125,16 +123,17 @@ d3.json("../assets/nyc.geojson", function(error, json) {
     createLearnMenu();
     hoods.on('mouseenter', spaceOut);
     // Start Learning Mode
-    d3.select('#learn-the-hoods').on('click', function() { 
+    d3.select('#learn-the-hoods').on('click', function() {
+      hoods.on('mouseenter', null);
       turnOnToolTips(); 
       removeLearnMenu();
     });
     // Start Game
     d3.select('#start-game').on('click', function() {
-      hoods.on('mouseenter', null)
+      hoods.on('mouseenter', null);
       turnOffToolTips();
+      removeStartMenu();
       removeLearnMenu();
-
       //initialize gameResults
       // var gameResults = {};
       playRound(hoodQuizNames, gameResults);
@@ -155,13 +154,18 @@ d3.json("../assets/nyc.geojson", function(error, json) {
     };
 
     function removeLearnMenu() {
-      d3.selectAll('.mode-menu').remove();
+      d3.selectAll('#learn-the-hoods').remove();
+    }
+
+    function removeStartMenu() {
+      d3.selectAll('#start-game').remove();
     }
 
     // Tool Tips
     function turnOffToolTips () {
       d3.selectAll('.hood').on('mouseenter', null);
       d3.selectAll('.hood').on('mouseout', null);
+      d3.selectAll('.tooltip').remove();                  
     };
 
     function turnOnToolTips () {
@@ -170,13 +174,13 @@ d3.json("../assets/nyc.geojson", function(error, json) {
           d3.selectAll('.tooltip').remove();
           var centroid = path.centroid(d);
           var enteredHood = d3.select(this);
-          learnHoods.attr('fill', 'darkgrey');
           enteredHood.attr('fill', 'orchid');
 
+          enteredHood.style('transition', 'scale(1.05)')
           svg.append('text')
-              .attr('class', 'tooltip shadow')
-              .attr('x', centroid[0] - 40)
-              .attr('y', centroid[1] - 20)
+              .attr('class', 'tooltip')
+              .attr('x', centroid[0] - 60)
+              .attr('y', centroid[1] - 30)
               .attr('font-family', 'sans-serif')
               .attr('font-size', '22px')
               .attr('fill', 'white')            
@@ -185,17 +189,17 @@ d3.json("../assets/nyc.geojson", function(error, json) {
               .text(d.properties.neighborhood);
               
           var rectWidth = 250;
-          var rectHeight = 300;
+          var rectHeight = 400;
           svg.append('rect')
               .attr('class', 'tooltip')
               .attr('fill', 'darkblue')
               .attr('height', rectHeight)
               .attr('width', rectWidth)
               .attr('x', 30)
-              .attr('y', 400)
+              .attr('y', 300)
               .attr('stroke', 'white')
-              .attr('stroke-width', 2)
-              .attr('opacity', 0.3)
+              .attr('stroke-width', 3)
+              .attr('opacity', 0.8)
               .attr('fill', 'darkblue');
         })
         .on('mouseout', function() {
@@ -218,7 +222,10 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         .enter()
         .append('path')
         .attr('class', function(d) {
-          return 'hood ' + nameToClass(d.properties.neighborhood) + ' boro-' + nameToClass(d.properties.borough);
+          return ['hood ',
+                   nameToClass(d.properties.neighborhood),
+                   ' boro-',
+                   nameToClass(d.properties.borough)].join('');
         })
         .attr('d', path)
         .attr('stroke', 'cornflowerblue')
@@ -253,36 +260,40 @@ d3.json("../assets/nyc.geojson", function(error, json) {
     // display name of hood to find
     $('#guess-ui').show()
                   .empty();
+    $('#main-menu').hide();
+
+    $('<p id="instruction">').appendTo($('#guess-ui'))
+            .text('Click on: ')
 
     d3.select('#guess-ui')
                   .append('p')
                   .text(currentQuizName)
-                  .style('font-size', '60px')
+                  .style('font-size', '50px')
                   .transition()
                   .duration(1200)
                   .style('font-size', '40px');
 
     // listen for user to submit guess by clicking a hood
-    d3.selectAll('.hood').on('click', checkGuess);
+    d3.selectAll('.hood').on('click', null)
+                         .on('click', checkGuess);
 
     // CHECK GUESS
     // ---------------------------------------------------------------------
     function checkGuess() {
-      console.log('checkGuess fired')
       // Turn off event listeners
       d3.selectAll('.hood').on('click', null);
       // Name of clicked hood becomes guess
       var clickedHood = d3.select(this)
-      var center = d3.geo.centroid(json.features[0])
-      
       var guessedName = clickedHood.attr('data-hoodname');
       var guessedClass = nameToClass(guessedName);
-      var correctHood = d3.select('.'+currentQuizClass);
+      var correctHood = d3.select('.' + currentQuizClass);
+      var center = d3.geo.centroid(json.features[0])
+      
       // Check if guess is correct
       if ( guessedClass == currentQuizClass ) {
         // If correct ....
         flashColor(currentQuizClass, 'lime');
-        // Increment results for hood 
+        // Increment score results for hood 
         if ( gameResults[currentQuizClass] == undefined ) {
           gameResults[currentQuizClass] = hitAmt;
         } else {
@@ -370,7 +381,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
 });
 
-
   function scoreMap(gameResults) {
     console.log('score map fired')
     
@@ -387,23 +397,31 @@ d3.json("../assets/nyc.geojson", function(error, json) {
   };
 
 function showGameResults(results) {
-  var raw_scores = Object.keys(results).map(function(key, index) {
-     return results[key];
+  var raw_scores = Object.keys(results)
+                         .map(function(key, index) { return results[key]; });
+  var sortedRaw = raw_scores.sort(function(a,b){
+    if (a > b) { return 1; } 
+    else if (a < b) { return -1; } 
+    else { return 0; }
   });
-
-  var minimumScore = Math.min(raw_scores);
-  var maximumScore = Math.max(raw_scores);
-
+  var minimumScore = sortedRaw.shift();
+  var maximumScore = sortedRaw.pop();
   var scoreScale = d3.scale.linear()
                      .domain([minimumScore, maximumScore])
-                    .range([0,100]);
-
+                     .range([0,80]);
+  // var scaleScale = d3.scale.linear()
+  //                    .domain([minimumScore, maximumScore])
+  //                    .range([0.95, 1.05]);
+    
   for (classKey in results) {
     var currentHood = d3.selectAll('.' + classKey);
     var currentScore = currentHood.attr('data-score');
     currentHood.transition()
               .duration(2000)
-              .attr('fill', 'hsl(' + scoreScale(currentScore) + '),100%,50%)');
+              .attr('fill', 'hsl(' + scoreScale(currentScore) + '),100%,50%)')
+              // .transition()
+              // .duration(2000)
+              // .style('transform', 'scale(' + scaleScale(currentScore) + ')');
   }
 };
 
@@ -413,12 +431,13 @@ function storeGameResults(results) {
 
   // Update score base on recent results
 
+  // POST request to update SCORES
+
 };
 
 
 
 // HELPER FUNCTIONS =================================================
-
 
 function setPathToColor(pathClass, color) {
   d3.selectAll('.' + pathClass).attr('fill', color);
@@ -449,23 +468,34 @@ function selectRandomHood(remainingNames) {
 
 function spaceOut() {
   var current = d3.select(this);
+      current.style('transform', 'scale(1.005)');
   var baseFill = current.attr('data-basecolor');
   var current = d3.select(this)
       .transition()
-      .duration(100)
+      .duration(250)
       .attr('fill','yellow')
       .transition()
       .duration(500)
       .attr('fill','orange')
       .transition()
-      .duration(1000)
+      .duration(750)
       .attr('fill','red')
       .transition()
-      .duration(1500)
+      .duration(1000)
       .attr('fill','purple')
       .transition()
-      .duration(2000)
-      .attr('fill', baseFill)   
+      .duration(1250)
+      .attr('fill','blue')
+      .transition()
+      .duration(1500)
+      .attr('fill','green')
+      // .each('end', spaceOut)
+      .transition()
+      .duration(1750)
+      .attr('fill', baseFill) 
+      .transition()
+      .duration(1600)
+      .style('transform', 'scale(1.0)')  
 };
 
 function flashColor(pathClass, color) {

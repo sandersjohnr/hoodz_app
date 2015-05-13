@@ -5,6 +5,7 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
+  <link href='http://fonts.googleapis.com/css?family=Londrina+Shadow' rel='stylesheet' type='text/css'>
 </head>
 <body>
 
@@ -14,12 +15,12 @@
   <span id="welcome">
     Welcome back, <%= current_user.first_name %>! 
     <p id="logout"><%= link_to 'Log Out', sessions_path, method: :delete %> </p>
-    <p id="main-menu"><%= link_to 'Main Menu', nyc_index_path %> </p>
+    <p id="main-menu"><%= link_to 'New York City', nyc_index_path %> </p>
   </span>
 <% else %>
   <div id="login">
-    <%= link_to 'Sign Up', new_user_path %> |
-    <%= link_to 'Log In', sessions_new_path %>
+    <span id="signup-link" class="link"><%= link_to 'Sign Up', new_user_path %></span>
+    <span id="login-link" class="link"><%= link_to 'Log In', sessions_new_path %></span>
   </div>
 <% end %>
 

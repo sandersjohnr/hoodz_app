@@ -1,8 +1,12 @@
 class SessionsController < ApplicationController
 
+  def index
+  end
+
   def show
     render json: session
   end
+
   def new
   end
 
@@ -17,7 +21,6 @@ class SessionsController < ApplicationController
     else
       render :new
     end
-
   end
 
   def destroy

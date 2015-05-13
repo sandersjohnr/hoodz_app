@@ -1,7 +1,7 @@
 body {
   font-family: Lato, sans-serif;
   color: white;
-  background-color: #3D4454;
+  background-color: #333;
   text-shadow: 1px 1px 3px black;
   cursor: pointer;
 }
@@ -13,40 +13,46 @@ a, p {
 a:hover, p:hover {
   color: cornflowerblue;
 }
-
 h1 {
+  font-family: 'Londrina Shadow', cursive;
   position: fixed;
   display: inline-block;
   top: -15px;
-  left: 2vw;
-  font-size: 8vh;
+  left: 50px;
+  font-size: 90px;
 }
 p#logout {
   position: fixed;
-  top: 25px;
+  top: 30px;
   right: 5vw;
+  font-family: 'Londrina Shadow', cursive;
+  font-size: 5vh;
+  font-style: bold;
 }
 #welcome {
   position: fixed;
-  top: 55px;
+  top: 85px;
   left: 300px; 
   font-size: 3vh;
 }
 #guess-ui {
   position: fixed;
-  left: 35px;
-  top: 140px;
+  left: 5vw;
+  top: 25vh;
+}
+#instruction {
+  position: absolute;
 }
 #main-menu {
   position: fixed;
-  left: 40px;
-  top: 80px;
+  top: 150px;
+  left: 60px;
   font-size: 30px;
 }
 #nyc-menu {
   position: fixed;
-  left: 60px;
-  top: 145px;
+  top: 215px;
+  left: 80px;
   font-size: 20px;
 }
 #mode-menu {
@@ -57,9 +63,12 @@ p#logout {
 }
 div#login {
   position: fixed;
-  left: 300px;
-  top: 55px;
-  font-size: 20pt;
+  left: 10vw;
+  top: 20vh;
+  font-size: 16pt;
+}
+.link {
+  margin-right: 35px;
 }
 form {
  display: inline-block;
@@ -87,10 +96,12 @@ svg {
 }
 path {
   cursor: pointer;
+  transition: 2;
 }
 path:hover {
   stroke-width: 2.3;
   stroke: cornflowerblue; 
+  /*transform: scale(1.005);*/
 }
 
 
