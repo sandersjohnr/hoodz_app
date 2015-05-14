@@ -396,7 +396,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
       svg.append('text')
           .attr('class', 'score')
           .attr('fill', 'red')
-          .attr('x', 215)
+          .attr('x', 243)
           .attr('y', 500)
           .attr('opacity', '1.0')
           .attr('font-size', '100px')
