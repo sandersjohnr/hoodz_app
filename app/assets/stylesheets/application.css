@@ -29,6 +29,15 @@ p#logout {
   font-size: 5vh;
   font-style: bold;
 }
+div#login {
+  position: fixed;
+  top: 25vh;
+  left: 30vw;
+  font-size: 16pt;
+}
+.link {
+  margin-right: 70px;
+}
 #welcome {
   position: fixed;
   top: 85px;
@@ -39,10 +48,15 @@ p#logout {
   position: fixed;
   left: 5vw;
   top: 25vh;
+  width: 400px;
 }
-#instruction {
+/*#instruction {
   position: absolute;
+
 }
+.guess-this {
+  position: absolute;
+}*/
 #main-menu {
   position: fixed;
   top: 150px;
@@ -61,26 +75,23 @@ p#logout {
   top: 165px;
   font-size: 20px;
 }
-div#login {
-  position: fixed;
-  left: 10vw;
-  top: 20vh;
-  font-size: 16pt;
-}
-.link {
-  margin-right: 35px;
-}
+
 form {
  display: inline-block;
  position: fixed;
- top: 25vh;
- left: 10vw;
- font-size: 18pt;
+ top: 40vh;
+ left: 30vw;
+ font-size: 16pt;
 }
 input {
   height: 22px;
   box-radius: 30px;
   font-size: 15pt;
+  margin: 5px 0;
+}
+#points {
+  color: gold;
+  
 }
 .points {
   position: fixed;
@@ -96,7 +107,8 @@ svg {
 }
 path {
   cursor: pointer;
-  transition: 2;
+  transition: scale 3s ease-in-out;
+
 }
 path:hover {
   stroke-width: 2.3;

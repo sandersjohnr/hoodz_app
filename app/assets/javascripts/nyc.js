@@ -1,9 +1,8 @@
 var width = 1100;
 var height = 750;
 var gameResults = {};
-var hitAmt = 0;
-var missAmt = -1;
-
+var hitAmt = 20;
+var missAmt = -5;
 // create svg element
 var svg = d3.select('#nyc-map')
             .append('svg')
@@ -13,6 +12,8 @@ var svg = d3.select('#nyc-map')
 
 // GRAB GEOJSON AND ADD PATH ELEMENTS TO DOM
 d3.json("../assets/nyc.geojson", function(error, json) {
+  var totalPoints = 0;
+
   var nyc_data = json.features;
   // Parse NYC data into separate boroughs
   var manhattan_data = nyc_data.filter(function (hood) {
@@ -25,22 +26,21 @@ d3.json("../assets/nyc.geojson", function(error, json) {
     return ( hood.properties.borough == 'Staten Island');
   });
   var brooklyn_data = nyc_data.filter(function (hood) {
-    return ( hood.properties.borough == 'Brooklyn');
+    return ( hood.properties.borough == 'Brooklyn' );
   });
   var bronx_data = nyc_data.filter(function (hood) {
-    return ( hood.properties.borough == 'Bronx');
+    return ( hood.properties.borough == 'Bronx' );
   });
 
-  var wOffset = 40;
-  var hOffset = 200;
+  var wOffset = 90;
+  var hOffset = 270;
   var center = d3.geo.centroid(json)
-  var scale = 7 * 10000;
+  var scale = 10 * 10000;
   var offset = [ width / 2 + wOffset, height / 2 - hOffset];  
   var projection = d3.geo.mercator()
       .scale(scale)
       .center(center)
       .translate(offset);
-
   // create path
   var path = d3.geo.path().projection(projection);
   // create and append hood shapes to SVG element  
@@ -57,7 +57,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
       .enter()
       .append('p').text(function(d) { return d; })
       .attr('class', function(d) { return nameToClass(d); });
-
   // Listen for click on Boro menu
   boroMenu.on('click', function(d) {
     // Turn off event listeners once clicked
@@ -85,7 +84,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         var hoods = d3ifyHoods(brooklyn_data);
         break;
       case 'queens':
-        wOffset = -55;
+        wOffset = 0;
         hOffset = 440;
         hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
         projection.translate(hoodOffset)
@@ -93,7 +92,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         var hoods = d3ifyHoods(queens_data);
         break;
       case 'bronx':
-        wOffset = -170;
+        wOffset = -130;
         hOffset = -60;
         hoodOffset = [ width / 2 + wOffset, height / 2 - hOffset]
         projection.translate(hoodOffset)
@@ -109,7 +108,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         var hoods = d3ifyHoods(staten_data);
         break;
     }
-
     // Initalize remaining names and classes arrays 
     var hoodQuizNames = [];
     d3.selectAll('.hood').each(function(d) {
@@ -118,7 +116,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         hoodQuizNames.push(currentName);
       } 
     });
-
     // Learn and Start Game Menu
     createLearnMenu();
     hoods.on('mouseenter', spaceOut);
@@ -128,14 +125,26 @@ d3.json("../assets/nyc.geojson", function(error, json) {
       turnOnToolTips(); 
       removeLearnMenu();
     });
+
     // Start Game
+    // --------------------------------------------------------------------
     d3.select('#start-game').on('click', function() {
       hoods.on('mouseenter', null);
       turnOffToolTips();
       removeStartMenu();
       removeLearnMenu();
-      //initialize gameResults
-      // var gameResults = {};
+
+      // Show points menu
+      svg.append('text')
+          .attr('id', 'total-points')
+          .attr('x', 230)
+          .attr('y', 500)
+          .attr('text-anchor', 'middle')
+          .attr('fill', 'gold')
+          .style('font-family', 'sans-serif')
+          .style('font-size', '100px')
+          .text(totalPoints);
+
       playRound(hoodQuizNames, gameResults);
     });
 
@@ -174,7 +183,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
           d3.selectAll('.tooltip').remove();
           var centroid = path.centroid(d);
           var enteredHood = d3.select(this);
-          enteredHood.attr('fill', 'orchid');
+          enteredHood.attr('fill', 'purple');
 
           enteredHood.style('transition', 'scale(1.05)')
           svg.append('text')
@@ -183,7 +192,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
               .attr('y', centroid[1] - 30)
               .attr('font-family', 'sans-serif')
               .attr('font-size', '22px')
-              .attr('fill', 'white')            
+              .attr('fill', 'yellow')            
               .attr('stroke-width', 2)
               .attr('text-anchor', 'middle')
               .text(d.properties.neighborhood);
@@ -195,7 +204,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
               .attr('fill', 'darkblue')
               .attr('height', rectHeight)
               .attr('width', rectWidth)
-              .attr('x', 30)
+              .attr('x', 60)
               .attr('y', 300)
               .attr('stroke', 'white')
               .attr('stroke-width', 3)
@@ -252,8 +261,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
   // ---------------------------------------------------------------------
   // PLAY ROUND
   // ---------------------------------------------------------------------
-
-
   function playRound(remainingNames, gameResults) {
     var currentQuizName = selectRandomHood(remainingNames);
     var currentQuizClass = nameToClass(currentQuizName);
@@ -267,6 +274,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
     d3.select('#guess-ui')
                   .append('p')
+                  .attr('class', 'guess-this')
                   .text(currentQuizName)
                   .style('font-size', '50px')
                   .transition()
@@ -283,13 +291,14 @@ d3.json("../assets/nyc.geojson", function(error, json) {
       // Turn off event listeners
       d3.selectAll('.hood').on('click', null);
       // Name of clicked hood becomes guess
-      var clickedHood = d3.select(this)
+      var clickedHood = d3.select(this);
       var guessedName = clickedHood.attr('data-hoodname');
       var guessedClass = nameToClass(guessedName);
       var correctHood = d3.select('.' + currentQuizClass);
-      var center = d3.geo.centroid(json.features[0])
+      var center = d3.geo.centroid(json.features[0]);
       
       // Check if guess is correct
+      // --------------------------------------------
       if ( guessedClass == currentQuizClass ) {
         // If correct ....
         flashColor(currentQuizClass, 'lime');
@@ -299,9 +308,12 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         } else {
           gameResults[currentQuizClass] += hitAmt;
         }
-        
+        // Assign data values to path elements for end-of-game heat map
         var currentScore = parseInt(correctHood.attr('data-score')) || 0;
         correctHood.attr('data-score', function() { return currentScore += hitAmt; });
+        // Score Animations
+        displayPoints(hitAmt);
+        updateTotalPoints(hitAmt);
 
         // when correct, remove guessed hood from remaining names
         var hoodIndex = remainingNames.indexOf(currentQuizName);  
@@ -317,84 +329,145 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         } else {
           gameResults[currentQuizClass] += missAmt;
         }
-        
+        // Score Animations
+        displayPoints(missAmt);
+        updateTotalPoints(missAmt);
+
+        // Assign data values to path elements for end-of-game heat map
         var currentScore = parseInt(correctHood.attr('data-score')) || 0;
         correctHood.attr('data-score', function() { return currentScore += missAmt; });
       }
 
       // play more rounds if names remain
-      if ( remainingNames.length > 0 ) {
+      if ( remainingNames.length > 0 ) {        
         playRound(remainingNames, gameResults);
 
       } else {
         // End game, remove event listeners
         hoods.on('click', null);
         winningDisplay(gameResults);
-        // showGameResults(gameResults);
-        storeGameResults(gameResults);
-        turnOnToolTips();
+        // storeGameResults(gameResults);
       }
     }
 
+    function updateTotalPoints(score) {
+      totalPoints += score;
+      var total = d3.select('#total-points');
+      if (totalPoints < 0) {
+        total.transition()
+             .duration(2000)
+             .attr('fill', 'red');
+      } else {
+        total.transition()
+             .duration(2000)
+             .attr('fill', 'gold');
+      }
+
+      if (score > 0) {
+        total.transition()
+             .delay(1200)
+             .text(totalPoints);
+      } else {
+        total.text(totalPoints);
+      }
+    };
   }; 
 
-  function winningDisplay(gameResults) {
-    var currentPath = d3.selectAll('.hood')
-    var currentFill = currentPath.attr('fill');
-    currentPath.transition()
-               .duration(50)
-               .attr('fill', 'purple')
-               .transition()
-               .duration(50)
-               .attr('fill', 'orange')
-               .transition()
-               .duration(50)
-               .attr('fill', 'purple')
-               .transition()
-               .duration(50)
-               .attr('fill', 'white')
-               .transition()
-               .duration(50)
-               .attr('fill', 'purple')
-               .transition()
-               .duration(50)
-               .attr('fill', 'orange')
-               .transition()
-               .duration(50)
-               .attr('fill', 'purple')
-               .transition()
-               .duration(50)
-               .attr('fill', 'white')
-               .transition()
-               .duration(50)
-               .attr('fill', 'purple')
-               .transition()
-               .duration(50)
-               .attr('fill', 'orange')
-               .transition()
-               .duration(50)
-               .attr('fill', 'purple')
-               .each('end', function() {
-                  scoreMap(gameResults)
-               })
-  };
+  function displayPoints(score) {
+    var svg = d3.select('svg');
+    if ( score > 0 ) {
+      score = '+ ' + score;
+      svg.append('text')
+          .attr('class', 'score')
+          .attr('fill', 'gold')
+          .attr('x', 190)
+          .attr('y', 650)
+          .attr('font-size', '0px')
+          .attr('opacity', '1.0')
+          .attr('text-anchor','middle')
+          .text(score)
+          .transition()
+          .duration(2000)
+          .attr('y', 500)
+          .attr('opacity', '0.0')
+          .attr('font-size', '100px')
+    } else if ( score < 0 ) {
+      score = '- ' + Math.abs(score);
+      svg.append('text')
+          .attr('class', 'score')
+          .attr('fill', 'red')
+          .attr('x', 215)
+          .attr('y', 500)
+          .attr('opacity', '1.0')
+          .attr('font-size', '100px')
+          .attr('text-anchor','middle')
+          .text(score)
+          .transition()
+          .duration(1500)
+          .attr('y', 750)
+          .attr('opacity', '0.0')
+          .attr('font-size', '0px')
+    }
+  };  
 
 });
 
-  function scoreMap(gameResults) {
-    console.log('score map fired')
-    
-    var scoreScale = d3.scale.linear()
-                      .domain([-5, 0])
-                      .range([0, 110]);
 
-    var currentHood = d3.select(this);
-    var currentScore = currentHood.attr('data-score');
-    currentHood.transition()
-                .duration(2000)
-                .attr('fill', 'hsl(' + scoreScale(currentScore) + '),100%,50%)')
+function winningDisplay(gameResults) {
+  var currentPath = d3.selectAll('.hood')
+  var currentFill = currentPath.attr('fill');
+  d3.select('total-points').transition()
+                          .duration(2000)
+                          .attr('font-size','200px')
+  currentPath.transition()
+             .duration(50)
+             .attr('fill', 'purple')
+             .transition()
+             .duration(50)
+             .attr('fill', 'orange')
+             .transition()
+             .duration(50)
+             .attr('fill', 'purple')
+             .transition()
+             .duration(50)
+             .attr('fill', 'white')
+             .transition()
+             .duration(50)
+             .attr('fill', 'purple')
+             .transition()
+             .duration(50)
+             .attr('fill', 'orange')
+             .transition()
+             .duration(50)
+             .attr('fill', 'purple')
+             .transition()
+             .duration(50)
+             .attr('fill', 'white')
+             .transition()
+             .duration(50)
+             .attr('fill', 'purple')
+             .transition()
+             .duration(50)
+             .attr('fill', 'orange')
+             .transition()
+             .duration(50)
+             .attr('fill', 'purple')
+             .each('end', function() {
+                showGameResults(gameResults);
+             })
+};
 
-  };
+function scoreMap(gameResults) {
+  var scoreScale = d3.scale.linear()
+                    .domain([-5, 0])
+                    .range([0, 110]);
+
+  var currentHood = d3.select(this);
+  var currentScore = currentHood.attr('data-score');
+  currentHood.transition()
+              .duration(2000)
+              .attr('fill', 'hsl(' + scoreScale(currentScore) + '),100%,50%)')
+};
 
 function showGameResults(results) {
   var raw_scores = Object.keys(results)
@@ -409,9 +482,6 @@ function showGameResults(results) {
   var scoreScale = d3.scale.linear()
                      .domain([minimumScore, maximumScore])
                      .range([0,80]);
-  // var scaleScale = d3.scale.linear()
-  //                    .domain([minimumScore, maximumScore])
-  //                    .range([0.95, 1.05]);
     
   for (classKey in results) {
     var currentHood = d3.selectAll('.' + classKey);
@@ -419,9 +489,6 @@ function showGameResults(results) {
     currentHood.transition()
               .duration(2000)
               .attr('fill', 'hsl(' + scoreScale(currentScore) + '),100%,50%)')
-              // .transition()
-              // .duration(2000)
-              // .style('transform', 'scale(' + scaleScale(currentScore) + ')');
   }
 };
 
@@ -432,18 +499,31 @@ function storeGameResults(results) {
   // Update score base on recent results
 
   // POST request to update SCORES
-
 };
 
 
 
 // HELPER FUNCTIONS =================================================
 
+function wigOut(results) {
+  var scaleScale = d3.scale.linear()
+                     .domain([0, 1])
+                     .range([0.85, 1.15]);
+
+  d3.selectAll('.hood')
+    .transition()
+    .duration(3000)
+    .style('transform', function() {
+      return 'scale('+ scaleScale(Math.random()) +')';
+    })
+    
+};
+
 function setPathToColor(pathClass, color) {
   d3.selectAll('.' + pathClass).attr('fill', color);
-}
+};
 
-function nameToClass (hoodName) {
+function nameToClass(hoodName) {
   var hoodNameArray = hoodName.split('\'')
                               .join('')
                               .split('.')
@@ -456,13 +536,14 @@ function nameToClass (hoodName) {
     lowercaseArray.push(hoodNameArray[i].toLowerCase());
   }
   return lowercaseArray.join('-');
-}
+};
 
 function selectRandomHood(remainingNames) {
   randNum = Math.floor(Math.random() * remainingNames.length)
   return remainingNames[randNum];
-}
+};
 
+//------------------------------
 // Aesthetic UI Events
 //------------------------------
 
@@ -489,17 +570,16 @@ function spaceOut() {
       .transition()
       .duration(1500)
       .attr('fill','green')
-      // .each('end', spaceOut)
       .transition()
       .duration(1750)
       .attr('fill', baseFill) 
       .transition()
       .duration(1600)
-      .style('transform', 'scale(1.0)')  
+      .style('transform', 'scale(1.0)');  
 };
 
 function flashColor(pathClass, color) {
-  var currentPath = d3.selectAll('.' + pathClass)
+  var currentPath = d3.selectAll('.' + pathClass);
   var currentFill = currentPath.attr('fill');
   currentPath.transition()
              .duration(50)
@@ -542,5 +622,5 @@ function flashColor(pathClass, color) {
              .attr('fill', 'white')
              .transition()
              .duration(50)
-             .attr('fill', color)
-}
+             .attr('fill', color);
+};
