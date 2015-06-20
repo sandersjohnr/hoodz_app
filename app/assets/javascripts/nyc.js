@@ -493,14 +493,10 @@ function showGameResults(results) {
 };
 
 function storeGameResults(results) {
-  console.log('store game results')
   // AJAX call to retrieve user score
-
   // Update score base on recent results
-
   // POST request to update SCORES
 };
-
 
 
 // HELPER FUNCTIONS =================================================
