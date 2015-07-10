@@ -1,8 +1,8 @@
 var width = 1100;
 var height = 750;
 var gameResults = {};
-var hitAmt = 20;
-var missAmt = -5;
+var hitPoints = 20;
+var missPoints = -5;
 // create svg element
 var svg = d3.select('#nyc-map')
             .append('svg')
@@ -270,16 +270,16 @@ d3.json("../assets/nyc.geojson", function(error, json) {
     $('#main-menu').hide();
 
     $('<p id="instruction">').appendTo($('#guess-ui'))
-            .text('Click on: ')
+            .text('Click on: ');
 
     d3.select('#guess-ui')
-                  .append('p')
-                  .attr('class', 'guess-this')
-                  .text(currentQuizName)
-                  .style('font-size', '50px')
-                  .transition()
-                  .duration(1200)
-                  .style('font-size', '40px');
+            .append('p')
+            .attr('class', 'guess-this')
+            .text(currentQuizName)
+            .style('font-size', '50px')
+            .transition()
+            .duration(1200)
+            .style('font-size', '40px');
 
     // listen for user to submit guess by clicking a hood
     d3.selectAll('.hood').on('click', null)
@@ -291,29 +291,27 @@ d3.json("../assets/nyc.geojson", function(error, json) {
       // Turn off event listeners
       d3.selectAll('.hood').on('click', null);
       // Name of clicked hood becomes guess
-      var clickedHood = d3.select(this);
-      var guessedName = clickedHood.attr('data-hoodname');
+      var guessedName = d3.select(this).attr('data-hoodname');
       var guessedClass = nameToClass(guessedName);
       var correctHood = d3.select('.' + currentQuizClass);
-      var center = d3.geo.centroid(json.features[0]);
       
       // Check if guess is correct
       // --------------------------------------------
       if ( guessedClass == currentQuizClass ) {
         // If correct ....
-        flashColor(currentQuizClass, 'lime');
+        flashColor(currentQuizClass, 'lime', 'lime');
         // Increment score results for hood 
         if ( gameResults[currentQuizClass] == undefined ) {
-          gameResults[currentQuizClass] = hitAmt;
+          gameResults[currentQuizClass] = hitPoints;
         } else {
-          gameResults[currentQuizClass] += hitAmt;
+          gameResults[currentQuizClass] += hitPoints;
         }
-        // Assign data values to path elements for end-of-game heat map
+        // Assign data values to path elements for end-of-game heat map & results storage
         var currentScore = parseInt(correctHood.attr('data-score')) || 0;
-        correctHood.attr('data-score', function() { return currentScore += hitAmt; });
+        correctHood.attr('data-score', function() { return currentScore += hitPoints; });
         // Score Animations
-        displayPoints(hitAmt);
-        updateTotalPoints(hitAmt);
+        displayPoints(hitPoints);
+        updateTotalPoints(hitPoints);
 
         // when correct, remove guessed hood from remaining names
         var hoodIndex = remainingNames.indexOf(currentQuizName);  
@@ -322,20 +320,38 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         }
 
       } else {
-        // If guess is incorrect ...
-        flashColor(currentQuizClass, 'red', 'yellow');
-        if ( gameResults[currentQuizClass] == undefined ) {
-          gameResults[currentQuizClass] = missAmt;
-        } else {
-          gameResults[currentQuizClass] += missAmt;
-        }
-        // Score Animations
-        displayPoints(missAmt);
-        updateTotalPoints(missAmt);
 
         // Assign data values to path elements for end-of-game heat map
         var currentScore = parseInt(correctHood.attr('data-score')) || 0;
-        correctHood.attr('data-score', function() { return currentScore += missAmt; });
+        var currentMisses = parseInt(correctHood.attr('data-misses')) || 0;
+        correctHood.attr('data-score', function() { return currentScore += missPoints; });
+        correctHood.attr('data-misses', function() { return currentMisses += 1; });
+        console.log(currentMisses)
+        currentMisses = parseInt(correctHood.attr('data-misses'));
+        switch (currentMisses) {
+          case 1: 
+            flashColor(currentQuizClass, 'red', 'yellow');
+            break;
+          case 2:
+            flashColor(currentQuizClass, 'red', 'orange');
+            break;
+          case 3:
+            flashColor(currentQuizClass, 'red', 'darkred');
+            // remove from future round if already 3 wrong guesses
+            var hoodIndex = remainingNames.indexOf(currentQuizName);  
+            if ( hoodIndex !== -1 ) {
+            remainingNames.splice(hoodIndex, 1);
+            }
+        }
+        // If guess is incorrect ...
+        if ( gameResults[currentQuizClass] == undefined ) {
+          gameResults[currentQuizClass] = missPoints;
+        } else {
+          gameResults[currentQuizClass] += missPoints;
+        }
+        // Score Animations
+        displayPoints(missPoints);
+        updateTotalPoints(missPoints);
       }
 
       // play more rounds if names remain
@@ -348,7 +364,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         winningDisplay(gameResults);
         // storeGameResults(gameResults);
       }
-    }
+    };
 
     function updateTotalPoints(score) {
       totalPoints += score;
@@ -453,8 +469,8 @@ function winningDisplay(gameResults) {
              .duration(50)
              .attr('fill', 'purple')
              .each('end', function() {
-                showGameResults(gameResults);
-             })
+                showResultsHeatMap(gameResults);
+             });
 };
 
 function scoreMap(gameResults) {
@@ -471,7 +487,7 @@ function scoreMap(gameResults) {
 
 
 // Function to display heat map of hit/miss results normalized across the 'hoods
-function showGameResults(results) {
+function showResultsHeatMap(results) {
   var raw_scores = Object.keys(results)
                          .map(function(key, index) { return results[key]; });
   var sortedRaw = raw_scores.sort(function(a,b){
@@ -513,11 +529,11 @@ function wigOut(results) {
     .duration(3000)
     .style('transform', function() {
       return 'scale('+ scaleScale(Math.random()) +')';
-    })
-    
+    });
 };
 
-function setPathToColor(pathClass, color) {
+function setPathToColor(pathClass, color) { 
+
   d3.selectAll('.' + pathClass).attr('fill', color);
 };
 
@@ -603,15 +619,6 @@ function flashColor(pathClass, color, endColor) {
              .transition()
              .duration(50)
              .attr('fill', 'white')
-             .transition()
-             .duration(50)
-             .attr('fill', color)
-             .transition()
-             .duration(50)
-             .attr('fill', 'white')
-             .transition()
-             .duration(50)
-             .attr('fill', color)
              .transition()
              .duration(50)
              .attr('fill', color)
