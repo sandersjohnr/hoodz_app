@@ -258,9 +258,9 @@ d3.json("../assets/nyc.geojson", function(error, json) {
     return hoods;
   };
 
-  // ---------------------------------------------------------------------
+  // ----------------------------------------------------------------
   // PLAY ROUND
-  // ---------------------------------------------------------------------
+  // ----------------------------------------------------------------
   function playRound(remainingNames, gameResults) {
     var currentQuizName = selectRandomHood(remainingNames);
     var currentQuizClass = nameToClass(currentQuizName);
@@ -286,7 +286,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
                          .on('click', checkGuess);
 
     // CHECK GUESS
-    // ---------------------------------------------------------------------
+    // ------------------------------------------------
     function checkGuess() {
       // Turn off event listeners
       d3.selectAll('.hood').on('click', null);
@@ -323,7 +323,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
 
       } else {
         // If guess is incorrect ...
-        flashColor(currentQuizClass, 'yellow');
+        flashColor(currentQuizClass, 'red', 'yellow');
         if ( gameResults[currentQuizClass] == undefined ) {
           gameResults[currentQuizClass] = missAmt;
         } else {
@@ -469,6 +469,8 @@ function scoreMap(gameResults) {
               .attr('fill', 'hsl(' + scoreScale(currentScore) + '),100%,50%)')
 };
 
+
+// Function to display heat map of hit/miss results normalized across the 'hoods
 function showGameResults(results) {
   var raw_scores = Object.keys(results)
                          .map(function(key, index) { return results[key]; });
@@ -574,7 +576,7 @@ function spaceOut() {
       .style('transform', 'scale(1.0)');  
 };
 
-function flashColor(pathClass, color) {
+function flashColor(pathClass, color, endColor) {
   var currentPath = d3.selectAll('.' + pathClass);
   var currentFill = currentPath.attr('fill');
   currentPath.transition()
@@ -618,5 +620,9 @@ function flashColor(pathClass, color) {
              .attr('fill', 'white')
              .transition()
              .duration(50)
-             .attr('fill', color);
+             .attr('fill', endColor);
 };
+
+
+
+
