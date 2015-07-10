@@ -387,7 +387,7 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         total.text(totalPoints);
       }
     };
-  }; 
+  };
 
   function displayPoints(score) {
     var svg = d3.select('svg');
