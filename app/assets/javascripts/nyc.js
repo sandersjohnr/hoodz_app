@@ -326,7 +326,6 @@ d3.json("../assets/nyc.geojson", function(error, json) {
         var currentMisses = parseInt(correctHood.attr('data-misses')) || 0;
         correctHood.attr('data-score', function() { return currentScore += missPoints; });
         correctHood.attr('data-misses', function() { return currentMisses += 1; });
-        console.log(currentMisses)
         currentMisses = parseInt(correctHood.attr('data-misses'));
         switch (currentMisses) {
           case 1: 
