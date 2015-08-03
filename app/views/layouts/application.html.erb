@@ -9,12 +9,10 @@
 </head>
 <body>
 
-
-
 <% if current_user %>
   <h1><%= link_to 'Hoodz', nyc_index_path %></h1>
   <span id="welcome">
-    Welcome back, <%= current_user.first_name %>! 
+    Welcome back, <%= current_user.first_name %>!
     <p id="logout"><%= link_to 'Log Out', sessions_path, method: :delete %> </p>
     <p id="main-menu"><%= link_to 'New York City', nyc_index_path %> </p>
   </span>

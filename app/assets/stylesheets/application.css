@@ -3,7 +3,7 @@ body {
   color: white;
   background-color: #333;
   text-shadow: 1px 1px 3px black;
-  cursor: pointer;
+  cursor: default;
 }
 a, p {
   text-decoration: none;
@@ -34,6 +34,7 @@ div#login {
   top: 25vh;
   left: 30vw;
   font-size: 16pt;
+  cursor: pointer;
 }
 .link {
   margin-right: 70px;
@@ -41,7 +42,7 @@ div#login {
 #welcome {
   position: fixed;
   top: 85px;
-  left: 300px; 
+  left: 300px;
   font-size: 3vh;
 }
 #guess-ui {
@@ -68,7 +69,6 @@ div#login {
   top: 165px;
   font-size: 20px;
 }
-
 form {
  display: inline-block;
  position: fixed;
@@ -84,7 +84,7 @@ input {
 }
 #points {
   color: gold;
-  
+
 }
 .points {
   position: fixed;
@@ -105,11 +105,13 @@ path {
 }
 path:hover {
   stroke-width: 2.3;
-  stroke: cornflowerblue; 
+  stroke: cornflowerblue;
   /*transform: scale(1.005);*/
 }
 
-
+.tooltip {
+  text-shadow: 3px 3px 5px black;
+}
 
 /*
  * This is a manifest file that'll be compiled into application.css, which will include all the files
