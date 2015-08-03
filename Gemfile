@@ -29,6 +29,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'httparty'
 gem 'mechanize'
 gem 'nokogiri'
+gem 'rails_12factor', group: :production
 # Use Unicorn as the app server
 # gem 'unicorn'
 
@@ -47,4 +48,3 @@ group :development, :test do
 
   gem 'pry-rails'
 end
-
