@@ -48,3 +48,5 @@ end
   gem 'spring'
 
   gem 'pry-rails'
+
+ruby '2.0.0'
