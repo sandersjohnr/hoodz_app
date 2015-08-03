@@ -1,7 +1,7 @@
-class GoogleImageWrapper 
+class GoogleImageWrapper
 
   API_ROOT_URL = 'http://images.google.com'
-  API_KEY
+  API_KEY = ''
 
   def self.search_hood_images(hood)
     search_url = [
