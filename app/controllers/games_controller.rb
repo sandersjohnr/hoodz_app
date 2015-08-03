@@ -1,4 +1,4 @@
-class gamesController < ApplicationController
+class GamesController < ApplicationController
 
   def index
   end

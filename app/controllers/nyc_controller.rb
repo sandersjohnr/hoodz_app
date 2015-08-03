@@ -4,4 +4,4 @@ class NycController < ApplicationController
 
   end
 
-end 
+end
