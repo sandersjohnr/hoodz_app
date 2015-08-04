@@ -8,28 +8,31 @@
   <link href='https://fonts.googleapis.com/css?family=Londrina+Shadow' rel='stylesheet' type='text/css'>
 </head>
 <body>
+<div class="background-image"></div>
+<div class="content">
 
-<% if current_user %>
-  <h1><%= link_to 'Hoodz', nyc_index_path %></h1>
-  <span id="welcome">
-    Welcome back, <%= current_user.first_name %>!
-    <p id="logout"><%= link_to 'Log Out', sessions_path, method: :delete %> </p>
-    <p id="main-menu"><%= link_to 'New York City', nyc_index_path %> </p>
-  </span>
-<% else %>
-  <h1><%= link_to 'Hoodz', sessions_new_path %></h1>
-  <div id="login">
-    <span id="signup-link" class="link"><%= link_to 'Sign Up', new_user_path %></span>
-    <span id="login-link" class="link"><%= link_to 'Log In', sessions_new_path %></span>
-  </div>
-<% end %>
+  <% if current_user %>
+    <h1><%= link_to 'Hoodz', nyc_index_path %></h1>
+    <span id="welcome">
+      Welcome back, <%= current_user.first_name %>!
+      <p id="logout"><%= link_to 'Log Out', sessions_path, method: :delete %> </p>
+      <p id="main-menu"><%= link_to 'New York City', nyc_index_path %> </p>
+    </span>
+  <% else %>
+    <h1><%= link_to 'Hoodz', sessions_new_path %></h1>
+    <div id="login">
+      <span id="signup-link" class="link"><%= link_to 'Sign Up', new_user_path %></span>
+      <span id="login-link" class="link"><%= link_to 'Log In', sessions_new_path %></span>
+    </div>
+  <% end %>
 
-<div id="guess-ui"></div>
-<div id="tool-tip"></div>
-<div id="mode-menu"></div>
-<div id="points"></div>
+  <div id="guess-ui"></div>
+  <div id="tool-tip"></div>
+  <div id="mode-menu"></div>
+  <div id="points"></div>
 
-<%= yield %>
+  <%= yield %>
 
+</div>
 </body>
 </html>
