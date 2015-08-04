@@ -1,6 +1,6 @@
 console.log('nyc.js loaded');
-var width = 1100;
-var height = 750;
+var width = window.innerWidth;
+var height = window.innerHeight;
 var gameResults = {};
 var hitPoints = 20;
 var missPoints = -5;

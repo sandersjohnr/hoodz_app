@@ -1,9 +1,11 @@
+* { box-sizing: border-box;}
 body {
   font-family: Lato, sans-serif;
   color: white;
   background-color: #333;
   text-shadow: 1px 1px 3px black;
   cursor: default;
+  margin: 0 auto;
 }
 a, p {
   text-decoration: none;
@@ -68,6 +70,12 @@ div#login {
   left: 100px;
   top: 165px;
   font-size: 20px;
+}
+#nyc-map {
+  /*border: 5px solid white;*/
+  margin: 0 auto;
+  height: 100vh;
+  width: 100vw
 }
 form {
  display: inline-block;
