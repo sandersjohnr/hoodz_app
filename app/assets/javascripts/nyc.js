@@ -1,3 +1,4 @@
+console.log('nyc.js loaded');
 var width = 1100;
 var height = 750;
 var gameResults = {};
@@ -10,9 +11,9 @@ var svg = d3.select('#nyc-map')
             .attr('width', width)
             .attr('height', height);
 
-var json = getNYCData();
+// var json = getNYCData();
 // GRAB GEOJSON AND ADD PATH ELEMENTS TO DOM
-// d3.json("../assets/nyc.geojson", function(error, json) {
+d3.json("../assets/nyc.geojson", function(error, json) {
   var totalPoints = 0;
 
   var nyc_data = json.features;
@@ -427,7 +428,7 @@ var json = getNYCData();
     }
   };
 
-// });
+});
 
 
 function winningDisplay(gameResults) {
@@ -631,7 +632,7 @@ function flashColor(pathClass, color, endColor) {
              .attr('fill', endColor);
 };
 
-function getNYCData() {
+// function getNYCData() {
   var nyc_data = {
   "type": "FeatureCollection",
 
